@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import Swal from 'sweetalert2';
-import { saveAs } from 'file-saver'
+import * as fileSaver from 'file-saver';
 
 @Injectable({
   providedIn: 'root'

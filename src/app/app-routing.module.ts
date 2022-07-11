@@ -5,6 +5,7 @@ import { ConfigurationMenuComponent } from './components/configuration-menu/conf
 import { CreditComponent } from './components/credit/credit.component';
 import { GameApplicationComponent } from './components/game-application/game-application.component';
 import { GameModeMenuComponent } from './components/game-mode-menu/game-mode-menu.component';
+import { GraphConstructorComponent } from './components/graph-constructor/graph-constructor.component';
 
 const routes: Routes = [
   {path: '', pathMatch: 'full', redirectTo: 'game-mode-selection'},
@@ -12,6 +13,7 @@ const routes: Routes = [
   {path: 'configuration', component: ConfigurationMenuComponent},
   {path: 'game-mode-selection', component: GameModeMenuComponent},
   {path: 'board', component: BoardComponent},
+  {path: 'graph-constructor', component: GraphConstructorComponent},
   {path: 'credit', component: CreditComponent},
 ];
 

@@ -1,0 +1,28 @@
+<!-- <p>graph-constructor works!</p> -->
+<div class="graph-constructor">
+    <div #canvas id="canvas" class="canvas card">
+        <!-- <div>
+            Canvas Space
+        </div> -->
+    </div>
+
+    <div class="tools card">
+        <button routerLink="/game-mode-selection">
+            <img src="assets/home.svg" alt="Retour au menu">
+            <p>Retour au menu</p>
+        </button>
+
+        <!-- Tools space -->
+        <div *ngFor="let tool of tools" class="card" [class]="isSelectedTool(tool)" (click)="selectTool(tool)">
+            <img src="assets/graphConstructor/{{tool}}.svg" alt="">
+            <p>
+                {{getToolName(tool)}}
+            </p>
+        </div>
+
+        <button (click)="saveGraph()">
+            <img src="assets/graphConstructor/save.svg" alt="Enregister le graphe">
+            <p>Enregistrer</p>
+        </button>
+    </div>
+</div>
