@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import Swal from 'sweetalert2';
-import saveAs from 'file-saver';
+import { saveAs } from 'file-saver'
 
 @Injectable({
   providedIn: 'root'
@@ -112,7 +112,7 @@ export class GraphConstructorService {
     return res;
   }
 
-  toolAction(tool: string, source, target = undefined) {
+  toolAction(tool: string, source: any, target = undefined) {
     switch (tool) {
       case 'add-node':
         this.addNode(source.x, source.y);
