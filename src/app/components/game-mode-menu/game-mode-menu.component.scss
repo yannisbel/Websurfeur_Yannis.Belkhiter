@@ -1,0 +1,84 @@
+.game-mode {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .header {
+        padding: 1em;
+
+        .logo {
+            float: left;
+            margin-left: 2em;
+            margin-right: 2em;
+            height: 5em;
+        }
+
+        .game-name {
+            text-align: center;
+        }
+    }
+
+    .doc {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 2em;
+    }
+
+    .content {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 90%;
+
+        .story-option {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 50%;
+            width: 12%;
+            padding: 2em;
+
+            img {
+                width: 8em;
+                height: 80%;
+                width: 60%;
+
+            }
+
+            label {
+                margin: auto;
+                margin-top: 1em;
+                font-weight: bold;
+            }
+        }
+
+        .game-option {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 45%;
+            width: 12%;
+            padding: 2em;
+
+            img {
+                width: 8em;
+                height: 60%;
+                width: 60%;
+
+            }
+
+            label {
+                margin: auto;
+                margin-top: 1em;
+                font-weight: bold;
+            }
+        }
+
+        .game-option:hover {
+            cursor: pointer;
+        }
+    }
+}

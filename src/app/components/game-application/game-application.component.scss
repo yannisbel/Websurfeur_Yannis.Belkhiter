@@ -1,0 +1,132 @@
+.game-application {
+    display: flex;
+    flex-direction: column;
+    height: 40%;
+
+    .header {
+        padding: 1em;
+        display: flex;
+
+        h1 {
+            margin: auto;
+        }
+
+        .btns {
+            align-self: center;
+
+            button {
+                padding: 1em;
+                margin: 0 .5em;
+            }
+        }
+    }
+
+    .content {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 90%;
+
+        .web-kesako {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 50%;
+            width: 12%;
+            padding: 2em;
+            text-align: center;
+
+            h3 .titre{
+                text-align: center;
+                }
+
+            img {
+                width: 8em;
+                height: 100%;
+                width: 60%;
+
+            }
+
+            label {
+                margin: auto;
+                margin-top: 1em;
+                font-weight: bold;
+            }
+        }
+
+        .history-option {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 50%;
+            width: 12%;
+            padding: 2em;
+            text-align: center;
+            font-weight: bold;
+
+            img {
+                width: 8em;
+                height: 200%;
+                width: 110%;
+
+            }
+
+            label {
+                margin: auto;
+                margin-top: 1em;
+                font-weight: bold;
+            }
+        }
+
+        .game-option {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 50%;
+            width: 12%;
+            padding: 2em;
+            text-align: center;
+
+            img {
+                width: 8em;
+                height: 90%;
+                width: 50%;
+
+            }
+
+            label {
+                margin: auto;
+                margin-top: 1em;
+                font-weight: bold;
+            }
+        }
+
+        .surfeur-option {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 50%;
+            width: 12%;
+            padding: 2em;
+            text-align:center;
+
+            img {
+                width: 4em;
+                height: 80%;
+                width: 50%;
+
+            }
+
+            label {
+                margin: auto;
+                margin-top: 2em;
+                font-weight: bold;
+            }
+        }
+
+    }
+}

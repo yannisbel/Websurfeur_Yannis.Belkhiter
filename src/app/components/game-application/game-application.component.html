@@ -1,0 +1,47 @@
+<!-- p>game-application works!</p -->
+
+<div class="game-application">
+    <div class="header card">
+        <div class="btns">
+            <button (click)="goBack()">Retour</button>
+        </div>
+        <h1>Les applications du jeu</h1>
+        <div class="btns">
+            <button (click)="displayGoals()">Objectifs du jeu</button>
+        </div>
+    </div>
+
+<!--     <div class="video">
+        <iframe width="560" height="315" src="getSafeUrl()" title="demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div> -->
+
+    <br/>
+    <br/>
+    <br/>
+
+    <div class="content">
+        <div class="web-kesako card" routerLink="/configuration">
+            <br/>
+            <img src="assets/web-kesako.png" alt="icône de kesako" width="10%" height="100%">
+            <h3 class = "kesako" text-align = center>Le WEB : kesako ?</h3>
+        </div>
+        <div class="history-option card" routerLink="/configuration">
+            <br/>
+            <br/>
+            <img src="assets/time-line.png" alt="icône history">
+            <br/>
+            <h4 class = "history">Histoire du web et de la théorie des graphes</h4>
+        </div>
+        <div class="game-option card" routerLink="/configuration">
+            <br/>
+            <img src="assets/problematique.png" alt="icône de problematique">
+            <h3>Les problématiques de recherche</h3>
+        </div>
+        <div class="surfeur-option card" routerLink="/configuration">
+            <br/>
+            <br/>
+            <img src="assets/surfeur.png" alt="icône de jeu libre">
+            <h4>Les travaux de recherches</h4>
+        </div>
+    </div>
+</div>

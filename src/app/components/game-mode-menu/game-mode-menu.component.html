@@ -1,0 +1,40 @@
+<!-- <p>game-mode-menu works!</p> -->
+
+<div class="game-mode">
+    <div class="header card">
+        <img class="logo" src="assets/logo-TN.png" alt="Logo Terra Numerica">
+        <h1 class="game-name">Le jeu du Surfeur</h1>
+    </div>
+    <div class="content">
+        <div class="game-option card" routerLink="/configuration">
+            <br/>
+            <img src="assets/adventure.svg" alt="icône de jeu libre">
+            <h3>Mode Aventure</h3>
+        </div>
+        <div class="game-option card" routerLink="/configuration">
+            <br/>
+            <img src="assets/free-game.svg" alt="icône de jeu libre">
+            <h2>Jeu Hello World</h2>
+        </div>
+        <div class="game-option card" routerLink="/configuration">
+            <br/>
+            <img src="assets/editor.svg" alt="icône de jeu libre">
+            <h2>Mode Edition</h2>
+        </div>
+    </div>
+    <div class="content">
+        <div class="game-option card" (click)="displayRules()">
+            <img src="assets/rules.svg" alt="icône des règles">
+            <h2>Règles</h2>
+        </div>
+        <div class="story-option card" routerLink="/game-application">
+            <br/>
+            <img src="assets/coding.png" alt="icône de jeu libre" width="10%" height="100%">
+            <h3>L'histoire du web</h3>
+        </div>
+        <div class="game-option card" routerLink="/credit">
+            <img src="assets/hand-shake.svg" alt="icône des crédits">
+            <h2>Crédits</h2>
+        </div>
+    </div>
+</div>
