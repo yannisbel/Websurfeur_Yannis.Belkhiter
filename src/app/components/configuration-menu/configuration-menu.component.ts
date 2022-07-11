@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { ParamBoundary } from 'src/app/models/param-boundary.model';
 import { GameService } from 'src/app/services/game/game.service';
 import { GraphService } from 'src/app/services/graph/graph.service';
+import { NavigationExtras, Router } from '@angular/router';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+
 
 @Component({
   selector: 'app-configuration-menu',
@@ -37,10 +38,20 @@ export class ConfigurationMenuComponent implements OnInit {
     rope: {
       param1: { min: 1, max: 25 },
       param2: undefined
+    },
+    import: {
+      param1: { min: 1, max: 25 },
+      param2: undefined
     }
   }
+
   public param1: number = 0;
   public param2: number = 0;
+
+  public selectedFileName = undefined;
+  private inputGraphJSONFile: File = null;
+  private graphGeneration: boolean = true;
+  private graphImportation: boolean = false;
 
   public opponent_types = ['ai', 'player'];
   private selected_opponent_type = 'player' // 'ai';
@@ -52,11 +63,26 @@ export class ConfigurationMenuComponent implements OnInit {
 
   public selected_level = 'easy';
 
-  constructor(private gameService: GameService, private router: Router, private graphService: GraphService) { }
+  constructor(private gameService: GameService, private router: Router, private graphService: GraphService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.initParams();
+    this.selectConfiguration(this.selected_configuration);
   }
+
+  ngAfterContentChecked() {
+    this.cdr.detectChanges()
+  }
+
+  selectGraphType(type: string) {
+    this.selected_configuration = type;
+    if(type !== 'import') {
+      this.graphImportation = false;
+      this.graphGeneration = true;
+    }
+    this.initParams();
+  }
+
 
   private initParams(): void {
     this.param1 = this.configuration_param_boundaries[this.selected_configuration].param1.min;
@@ -67,6 +93,12 @@ export class ConfigurationMenuComponent implements OnInit {
 
   displayRules() {
     this.gameService.displayRules()
+  }
+
+  selectGraphImportation() {
+    this.graphGeneration = false;
+    this.graphImportation = true;
+    /* this.selectedGraphType = 'grid' */
   }
 
   goBack() {
@@ -93,12 +125,16 @@ export class ConfigurationMenuComponent implements OnInit {
         return 'Dodécahédron';
       default:
         return 'Configuration inconnue';
+      case 'import':
+        return 'import';
     }
   }
 
   selectConfiguration(configuration: string) {
     if(!configuration.includes('conf')) {
       this.selected_configuration = configuration;
+      this.graphImportation = false;
+      this.graphGeneration = true;
     }
     this.initParams();
   }
@@ -107,6 +143,23 @@ export class ConfigurationMenuComponent implements OnInit {
     let classes = this.selected_configuration === configuration ? 'selected' : ''
     classes += ` ${configuration.includes('conf') ? 'disabled' : ''}`
     return classes
+  }
+
+  isSeletectedGraphImportation() {
+    return this.graphImportation ? 'selected' : '';
+  }
+
+  
+  onFileChange(file) {
+    if (file) {
+      this.inputGraphJSONFile = file;
+      this.selectedFileName = this.inputGraphJSONFile.name;
+      this.graphService.loadGraphFromFile(file);
+      this.graphGeneration = false;
+      this.graphImportation = true;
+    } else {
+      this.selectedFileName = undefined
+    }
   }
 
   /* Functions for inputs */

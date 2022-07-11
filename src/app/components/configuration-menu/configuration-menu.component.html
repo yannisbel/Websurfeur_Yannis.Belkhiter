@@ -16,11 +16,24 @@
                 <h3>Choisissez un plateau</h3>
 
                 <div class="options">
+
                     <div *ngFor="let conf of configurations" (click)="selectConfiguration(conf)" class="option card"
                         [class]="isSelectedConfiguration(conf)">
                         <img src="assets/{{conf}}.svg">
                         {{getConfigurationName(conf)}}
                     </div>
+                    
+                    <!-- <div class="option card" [class]="isSelectedGraphType('import')" (click)="selectGraphType('import')">
+                        <input (click)="selectGraphType('import')" id="graph-file-input" name="graph-file-input" class="input-file" type="file"
+                            accept="application/json" (change)="onFileChange($event.target.files[0])">
+                        <label *ngIf="!selectedFileName" id="label-import-file" for="graph-file-input">
+                            Choissisez un fichier...
+                        </label>
+                        <label *ngIf="selectedFileName" id="label-import-file" for="graph-file-input">
+                            {{selectedFileName}}
+                        </label>
+                    </div>
+                    -->
                 </div>
                 <br />
             </div>

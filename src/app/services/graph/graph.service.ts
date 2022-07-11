@@ -7,6 +7,8 @@ import { Tree } from 'src/app/models/Graph/Tree/tree';
 import { Grid } from 'src/app/models/Graph/Grid/grid';
 import { Tore } from 'src/app/models/Graph/Grid/Tore/tore';
 import { Cycle } from 'src/app/models/Graph/Cycle/cycle';
+import { Common } from 'src/app/models/Graph/Common/common';
+import { Specific } from 'src/app/models/Graph/Specific/specific';
 
 
 @Injectable({
@@ -16,8 +18,20 @@ export class GraphService {
 
   private graph: Graph | undefined;
 
-  constructor() { }
+  private inputFile!: File;
 
+  constructor(private router: Router, private http: HttpClient) {
+    if (localStorage.getItem("method") !== null) {
+      switch(localStorage.getItem("method")) {
+        case "import":
+          if (localStorage.getItem("config") !== null) {
+            const config = JSON.parse(localStorage.getItem("config"))
+            this.importGraph(config);
+          }
+          break;
+      }
+    }
+  }
   drawGraph(svg: any): void {
     /* console.log('GRAPH', this.graph); */
     this.graph?.draw(svg);
@@ -248,6 +262,82 @@ export class GraphService {
     })
 
     return new Cycle(nodes, links);
+  }
+
+  private async generatePetersen() {
+    const blob = await this.downloadAssets('petersen');
+    const file = new File([blob], 'petersen.json');
+    /* console.log('FILE',file); */
+    await this.loadGraphFromFile(file);
+    /* console.log('HERE'); */
+  }
+
+  private async generateDodecahedron() {
+    const blob = await this.downloadAssets('dodecahedron');
+    const file = new File([blob], 'dodecahedron.json');
+    /* console.log('FILE',file); */
+    await this.loadGraphFromFile(file);
+    /* console.log('HERE'); */
+  }
+
+  private async generateFromFile(filename: string) {
+    const blob = await this.downloadAssets(filename);
+    const file = new File([blob], `${filename}.json`);
+    await this.loadGraphFromFile(file);
+  }
+
+  private downloadAssets(name: string): Promise<Blob> {
+    return new Promise((resolve) => {
+      this.http.get(`assets/${name}.json`, {responseType: 'blob'}).subscribe(data => {
+        /* console.log(data) */
+        resolve(data)
+      })
+    })
+    
+  }
+
+  readAsync(file: File): Promise<Graph> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        let config = JSON.parse(reader.result.toString());
+        resolve(config);
+      };
+      reader.onerror = () => {
+        reject (new Error ('Unable to read..'));
+      };
+      reader.readAsText(file);
+    });
+  }
+  
+  async loadGraphFromFile(file: File) {
+    this.inputFile = file;
+    const config = await this.readAsync(file);
+    this.importGraph(config);
+    /* console.log('THERE'); */
+  }
+
+  importGraph(config) {
+    this.graph = null;
+    localStorage.setItem("method", "import");
+    localStorage.setItem("config", JSON.stringify(config));
+    switch(config.typology) {
+      case 'grid':
+        this.graph = new Grid(config.nodes, config.links, config.width, config.height);
+        break;
+      case 'cycle':
+        this.graph = new Cycle(config.nodes, config.links);
+        break;
+      case 'tree':
+        this.graph = new Tree(config.nodes, config.links);
+        break;
+      case 'random':
+        this.graph = new Common(config.nodes, config.links);
+        break;
+      case 'specific':
+        this.graph = new Specific(config.nodes, config.links);
+        break;
+    }
   }
 
 
