@@ -22,8 +22,9 @@
                         <img src="assets/{{conf}}.svg">
                         {{getConfigurationName(conf)}}
                     </div>
-                    
-                    <!-- <div class="option card" [class]="isSelectedGraphType('import')" (click)="selectGraphType('import')">
+                                
+                <div class="option card" [class]="isSelectedGraphType('import')">
+                    <div class="item-import file-label">
                         <input (click)="selectGraphType('import')" id="graph-file-input" name="graph-file-input" class="input-file" type="file"
                             accept="application/json" (change)="onFileChange($event.target.files[0])">
                         <label *ngIf="!selectedFileName" id="label-import-file" for="graph-file-input">
@@ -33,7 +34,9 @@
                             {{selectedFileName}}
                         </label>
                     </div>
-                    -->
+                    <label class="item-import-label">Importer un graphe</label>
+                </div>
+                    
                 </div>
                 <br />
             </div>

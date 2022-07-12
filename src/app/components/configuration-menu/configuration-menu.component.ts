@@ -68,19 +68,90 @@ export class ConfigurationMenuComponent implements OnInit {
   ngOnInit(): void {
     this.initParams();
     this.selectConfiguration(this.selected_configuration);
+      this.getDataFromLocalStorage();
+      if(navigator.userAgent.includes('Android') 
+          || navigator.userAgent.includes('iPad') || navigator.userAgent.includes('iPhone')) {
+        this.selected_opponent_type = 'ai'
+      }
+      this.selectGraphType(this.selected_configuration);
+      this.updateParamsName();
+  }
+  
+  private getDataFromLocalStorage() {
+    if(localStorage.getItem('graphType')) {
+      this.selected_configuration = localStorage.getItem('graphType');
+    }
+    if(localStorage.getItem('graphParam1')) {
+      this.config['graphParam1'] = +localStorage.getItem('graphParam1')
+    }
+    if(localStorage.getItem('graphParam2')) {
+      this.config['graphParam2'] = +localStorage.getItem('graphParam2')
+    }
+    if(localStorage.getItem('opponentType')) {
+      this.selectedOpponentType = localStorage.getItem('opponentType')
+    }
+    if(localStorage.getItem('selectedAi')) {
+      this.selectedAi = localStorage.getItem('selectedAi')
+    }
+    if(localStorage.getItem('gameMode')) {
+      this.gameModeSelected = localStorage.getItem('gameMode')
+    }
+    if(localStorage.getItem('speed')) {
+      this.config['thiefSpeed'] = +localStorage.getItem('speed')
+    }
+    if(localStorage.getItem('copsNum')) {
+      this.config['copsNumber'] = +localStorage.getItem('copsNum')
+    }
+  }
+
+  private setDataToLocalStorage() {
+    localStorage.setItem('graphType', this.selected_configuration)
+    localStorage.setItem('graphParam1', `${this.config['graphParam1']}`)
+    localStorage.setItem('graphParam2', `${this.config['graphParam2']}`)
+    localStorage.setItem('opponentType', this.selected_opponent_type)
+    localStorage.setItem('selectedAi', this.selectedAi)
+    localStorage.setItem('gameMode', this.gameModeSelected)
+    localStorage.setItem('speed', `${this.config['thiefSpeed']}`)
+    localStorage.setItem('copsNum', `${this.config['copsNumber']}`)
   }
 
   ngAfterContentChecked() {
     this.cdr.detectChanges()
   }
 
-  selectGraphType(type: string) {
-    this.selected_configuration = type;
-    if(type !== 'import') {
-      this.graphImportation = false;
-      this.graphGeneration = true;
+  updateGraphParams() {
+    this.config['graphParam1'] = this.paramsBoundaries[this.selectedGraphType].param1;
+    this.config['graphParam2'] = this.paramsBoundaries[this.selectedGraphType].param2;
+  }
+
+  updateParamsName() {
+    switch (this.selected_configuration) {
+      case 'grid':
+        this.paramsNames = ['Largeur :', 'Longueur :'];
+        break;
+      case 'tore':
+        this.paramsNames = ['Largeur :', 'Longueur :'];
+        break;
+      case 'cycle':
+        this.paramsNames = ['Nombre de noeuds :']
+        break;
+      case 'tree':
+        this.paramsNames = ['Nombre de noeuds :', 'Arité de l\'arbre :']
+        break;
+      case 'copsAlwaysWin':
+        this.paramsNames = ['Nombre de noeuds :']
+        break;
+      case 'random':
+        this.paramsNames = []
+        break;
+      default:
+        this.paramsNames = []
+        break;
     }
-    this.initParams();
+  }
+
+  ngAfterContentChecked() {
+    this.cdr.detectChanges()
   }
 
 
@@ -139,16 +210,34 @@ export class ConfigurationMenuComponent implements OnInit {
     this.initParams();
   }
 
+  selectImportation(configuration: string) {
+    if(!configuration.includes('import')) {
+      this.selected_configuration = configuration;
+      this.graphImportation = true;
+      this.graphGeneration = false;
+    }
+    this.initParams();
+  }
+
   isSelectedConfiguration(configuration: string): string {
     let classes = this.selected_configuration === configuration ? 'selected' : ''
     classes += ` ${configuration.includes('conf') ? 'disabled' : ''}`
     return classes
   }
 
-  isSeletectedGraphImportation() {
-    return this.graphImportation ? 'selected' : '';
+  isSelectedGraphType(typology) {
+    return typology === this.selected_configuration ? 'selected' : ''
   }
 
+  selectGraphType(type: string) {
+    this.selected_configuration = type;
+    if(type !== 'import') {
+      this.graphImportation = false;
+      this.graphGeneration = true;
+    }
+    this.updateParamsName();
+    this.updateGraphParams();
+  }
   
   onFileChange(file) {
     if (file) {
@@ -193,11 +282,17 @@ export class ConfigurationMenuComponent implements OnInit {
         return 'Nombre de noeuds : ';
       case 'dodecahedron':
         return '';
+      case 'petersen':
+        return '';
+      case 'import':
+        return '';
       default:
         return 'Unknown but usefeul (I think)'
     }
   }
 
+
+  
   getParam2Name() {
     switch (this.selected_configuration) {
       case 'tree':
