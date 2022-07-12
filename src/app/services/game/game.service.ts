@@ -5,6 +5,9 @@ import * as d3 from 'd3';
 import { Pawn } from 'src/app/models/Pawn/pawn';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
+import { Strat2Goat } from 'src/app/models/Strategy/Goat/strat-2-goat/strat-2-goat.module';
+import { IStrategy } from 'src/app/models/Strategy/istrategy';
+import { GraphService } from '../graph/graph.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +22,9 @@ export class GameService {
   private _collect_speed = 1;
 
   private svg: any;
+
+  private ai_goat_strat!: () => IStrategy;
+  private ai_cabbage_strat!: () => IStrategy;
 
   private goat_turn: boolean = false;
   private goat_win: boolean = false;
@@ -111,7 +117,32 @@ export class GameService {
 
   update() {
     if(this.opponent_type === 'ai') {
-      
+      if(this._player_side === 'goat'){
+        if(this.goat_turn === true){
+          d3.select('#details-informations')
+          .style('color', `${this.goat_color}`)
+          .text(() => "C'est au tour de la chèvre")
+        }
+        else{ //C'est au tour de l'ia et il joue le collecteur de choux
+          d3.select('#details-informations')
+          .style('color', `${this.collector_color}`)
+          .text(() => "Le ramasseur de choux réfléchit à son coup...")
+          this.ai_cabbage_strat.action(this._graph, this.goat_position, this.cabbage_positions);
+        }
+      }
+      else{
+        if(this.goat_turn === true){
+          d3.select('#details-informations')
+          .style('color', `${this.collector_color}`)
+          .text(() => "C'est au tour du ramasseur de choux")
+        }
+        else{ //C'est au tour de l'ia et il joue le collecteur de choux
+          d3.select('#details-informations')
+          .style('color', `${this.goat_color}`)
+          .text(() => "La chèvre réfléchit à son coup")
+          this.collectCabbages()
+        }
+      }
     } else {
       if(this.goat_turn === true) {
         d3.select('#details-informations')
@@ -125,6 +156,8 @@ export class GameService {
       }
     }
   }
+  
+
 
   private displayCollectCount() {
     d3.select('#collect-informations').remove();

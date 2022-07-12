@@ -6,19 +6,19 @@
         <h1 class="game-name">Le jeu du Surfeur</h1>
     </div>
     <div class="content">
-        <div class="game-option card" routerLink="/configuration">
+        <div class="game-option card" (click)="jeuLibre()">
             <br/>
             <img src="assets/adventure.svg" alt="icône de jeu libre">
             <h3>Mode Aventure</h3>
         </div>
-        <div class="game-option card" routerLink="/configuration">
+        <div class="game-option card" (click)="jeuLibre()">
             <br/>
             <img src="assets/free-game.svg" alt="icône de jeu libre">
             <h2>Jeu Libre</h2>
         </div>
         <div class="game-option card" routerLink="/graph-constructor">
             <br/>
-            <img src="assets/editor.svg" alt="icône de jeu libre">
+            <img src="assets/editor.svg" alt="icône d'édition de graphes'">
             <h2>Mode Edition</h2>
         </div>
     </div>
