@@ -4,27 +4,30 @@ import Swal from 'sweetalert2';
 import * as d3 from 'd3';
 import { Pawn } from 'src/app/models/Pawn/pawn';
 import { environment } from 'src/environments/environment';
-import { Router } from '@angular/router';
-import { Strat2Goat } from 'src/app/models/Strategy/Goat/strat-2-goat/strat-2-goat.module';
+import { NavigationExtras, Router } from '@angular/router';
+import { Strat2Goat } from 'src/app/models/Strategy/strat-2-goat';
 import { IStrategy } from 'src/app/models/Strategy/istrategy';
 import { GraphService } from '../graph/graph.service';
+import { NaiveGoat } from 'src/app/models/Strategy/naive-goat';
+import { NaiveCabbage } from 'src/app/models/Strategy/naive-cabbage.module';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
+  [x: string]: any;
 
-  private _board_configuration: string | undefined;
-  private _board_params: number[] = [];
-  private _opponent_type: string | undefined;
-  private _player_side: string = 'unknown';
-  private _graph: Graph | undefined;
-  private _collect_speed = 1;
+  private board_configuration: string | undefined;
+  private board_params: number[] = [];
+  private opponent_type: string | undefined;
+  private player_side: string = 'unknown';
+  private graph: Graph | undefined;
+  private collect_speed = 1;
 
   private svg: any;
 
-  private ai_goat_strat!: () => IStrategy;
-  private ai_cabbage_strat!: () => IStrategy;
+  private ai_goat_strat: () => IStrategy;
+  private ai_cabbage_strat: () => IStrategy;
 
   private goat_turn: boolean = false;
   private goat_win: boolean = false;
@@ -115,7 +118,105 @@ export class GameService {
     this.displayCollectCount();
   }
 
-  update() {
+  setOpponentType(type: string) {
+    this.opponentType = type;
+  }
+
+  async validateParams() {
+    if (this.paramSafetyCheck()) {
+
+      if (this.graphGeneration) {
+        await this.graphService.generateGraph(this.selectedGraphType, [this.config['graphParam1'], this.config['graphParam2']])
+      }
+      // else if (this.graphImportation) {
+      //   this.graphService.loadGraphFromFile(this.inputGraphJSONFile);
+      // }
+      
+      switch (this.gameModeSelected) {
+        case "easy":
+          break;
+        case "medium":
+          break;
+        case "hard":
+          break;
+        case "extreme":
+          break;
+      }
+      const extras: NavigationExtras = {
+        queryParams: {
+          // copsNum: this.cops,
+          // graphType: this.selectedGraphType,
+          // oppenent: this.selectedOpponentType,
+          // graphParams: [this.graphParam1, this.graphParam2],
+          gameMode: this.gameModeSelected
+        }
+      }
+      this.gameService.setOpponentType(this.selectedOpponentType);
+      this.gameService.setThiefSpeed(this.config['thiefSpeed']);
+      if (this.selectedOpponentType === 'ai') {
+        this.gameService.setAiSide(this.selectedAi);
+      } else {
+        this.gameService.setAiSide(undefined);
+      }
+      this.setDataToLocalStorage();
+      this.router.navigate(['/board'], extras);
+    }
+  }
+
+  chooseAIStrat() {
+    switch (this.gameMode) {
+      case 'medium':
+        switch (this.graphService.getGraph().typology) {
+          case 'grid':
+            this.ai_goat_strat = () => {
+              return new NaiveGoat();
+            };
+            break;
+          default:
+            this.ai_goat_strat = () => {
+              return new NaiveGoat();
+            }
+        }
+        this.ai_cabbage_strat = () => {
+          return new NaiveCabbage();
+        };
+        break;
+      case 'extreme':
+      case 'hard':
+        switch (this.graphService.getGraph().typology) {
+          case 'grid':
+            this.ai_goat_strat = () => {
+              return new NaiveGoat();
+            };
+            break;
+          case 'copsAlwaysWin':
+            this.ai_goat_strat = () => {
+              return new NaiveGoat();
+            };
+            break;
+          default:
+            this.ai_goat_strat = () => {
+              return new NaiveGoat();
+            };
+            break;
+        }
+        this.ai_cabbage_strat = () => {
+          return new NaiveCabbage();
+        };
+        break;
+      case 'easy':
+      default:
+        this.ai_goat_strat = () => {
+          return new NaiveGoat();
+        };
+        this.ai_cabbage_strat = () => {
+          return new NaiveCabbage();
+        };
+        break;
+    }
+  }
+
+  async update() {
     if(this.opponent_type === 'ai') {
       if(this._player_side === 'goat'){
         if(this.goat_turn === true){
@@ -127,7 +228,9 @@ export class GameService {
           d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
           .text(() => "Le ramasseur de choux réfléchit à son coup...")
-          this.ai_cabbage_strat.action(this._graph, this.goat_position, this.cabbage_positions);
+          let pos = this.action(this.graphService.getGraph(), this.cops_position, this.thiefs_position);
+          this.updateCabbagePosition(pos);
+          this.validateTurnCallback();
         }
       }
       else{
@@ -140,7 +243,9 @@ export class GameService {
           d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
           .text(() => "La chèvre réfléchit à son coup")
-          this.collectCabbages()
+          let pos = this.action(this.graphService.getGraph(), this.cops_position, this.thiefs_position);
+          this.updateGoatPosition(pos);
+          this.validateTurnCallback();
         }
       }
     } else {

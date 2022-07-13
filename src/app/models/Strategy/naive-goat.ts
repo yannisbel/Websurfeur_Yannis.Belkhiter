@@ -1,18 +1,10 @@
 import { NgModule } from '@angular/core';
-import { IStrategy } from '../../istrategy';
+import { IStrategy } from './istrategy';
 import { CommonModule } from '@angular/common';
 import { Graph } from 'src/app/models/Graph/graph';
 import { GraphService } from 'src/app/services/graph/graph.service';
 import { GameService } from 'src/app/services/game/game.service';
 
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule
-  ]
-})
 
 export class NaiveGoat implements IStrategy {
 

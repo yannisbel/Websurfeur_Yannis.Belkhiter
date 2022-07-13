@@ -1,14 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IStrategy } from '../../istrategy';
+import { IStrategy } from './istrategy';
 import { Graph } from 'src/app/models/Graph/graph';
 
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule
-  ]
-})
 export class Strat2Goat implements IStrategy {
   [x: string]: any;
 

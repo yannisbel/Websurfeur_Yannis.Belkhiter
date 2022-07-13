@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AdventureMenuComponent } from './components/adventure-menu/adventure-menu.component';
 import { BoardComponent } from './components/board/board.component';
 import { ConfigurationMenuComponent } from './components/configuration-menu/configuration-menu.component';
 import { CreditComponent } from './components/credit/credit.component';
@@ -14,6 +15,7 @@ const routes: Routes = [
   {path: 'game-mode-selection', component: GameModeMenuComponent},
   {path: 'board', component: BoardComponent},
   {path: 'graph-constructor', component: GraphConstructorComponent},
+  {path: 'adventure-menu', component: AdventureMenuComponent},
   {path: 'credit', component: CreditComponent},
 ];
 

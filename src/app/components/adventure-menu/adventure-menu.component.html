@@ -1,1 +1,17 @@
-<p>adventure-menu works!</p>
+<!-- <p>adventure-menu works!</p> -->
+<div class="adventure-menu">
+    <div class="header card">
+        <button (click)="goBack()">Retour</button>
+        <span class="title">Menu d'aventure</span>
+    </div>
+    <div class="adventure-selector card">
+        <!-- Explications d'aventure -->
+        <div *ngFor="let adventure of adventures; let i = index" class="adventure card" [class]="isSelected(adventure)" (click)="selectAdventure(adventure)">
+            <img [src]="adventure.picture" width="100px"/>
+            <span>{{adventure.getName()}}</span>
+        </div>
+    </div>
+    <div class="buttons card">
+        <button class="start-btn" (click)="launchAdventure()">Commencer : "{{selected_adventure.getName()}}"</button>
+    </div>
+</div>

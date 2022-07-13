@@ -1,0 +1,51 @@
+.adventure-menu {
+
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        padding: 0.5em;
+        
+        .title {
+            font-weight: bold;
+            font-size: xx-large;
+            position: relative;
+            margin-left: 35%;
+        }
+
+        button {
+            padding: 1em;
+
+            img {
+                width: 2em;
+            }
+        }
+    }
+
+    .adventure-selector {
+        padding: 1em;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+
+        .adventure {
+            width: 20%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+    }
+
+    .buttons {
+        padding: 1em;
+        display: flex;
+        justify-content: center;
+
+        .start-btn {
+            padding: 1em;
+            width:100%
+        }
+    }
+
+}
