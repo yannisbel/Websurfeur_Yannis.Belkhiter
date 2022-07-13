@@ -234,12 +234,12 @@ export class GameService {
         }
       }
       else{
-        if(this.goat_turn === true){
+        if(this.goat_turn === false){
           d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
           .text(() => "C'est au tour du ramasseur de choux")
         }
-        else{ //C'est au tour de l'ia et il joue le collecteur de choux
+        else{ //C'est au tour de l'ia et il joue la chèvre
           d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
           .text(() => "La chèvre réfléchit à son coup")
@@ -282,6 +282,20 @@ export class GameService {
     if(idx !== -1) {
       this.goat_win = true;
     }
+  }
+
+  private updateCabbagePosition(positions) {
+    for(const cabbage of positions) {
+      const idx = this.cabbage_positions.findIndex(c =>{
+        return c.index == cabbage.attr('index') 
+      })
+      
+      if(idx !== -1) {
+        this.cabbage_positions.splice(idx, 1)
+        cabbage.remove();
+      }
+    }
+    this.collected_cabbages = []
   }
 
   validateTurn() {
