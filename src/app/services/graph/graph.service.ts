@@ -32,6 +32,7 @@ export class GraphService {
       }
     }
   }
+
   drawGraph(svg: any): void {
     /* console.log('GRAPH', this.graph); */
     this.graph?.draw(svg);
@@ -272,7 +273,7 @@ export class GraphService {
     /* console.log('HERE'); */
   }
 
-  private async generateDodecahedron() {
+  async generateDodecahedron() {
     const blob = await this.downloadAssets('dodecahedron');
     const file = new File([blob], 'dodecahedron.json');
     /* console.log('FILE',file); */
@@ -280,13 +281,13 @@ export class GraphService {
     /* console.log('HERE'); */
   }
 
-  private async generateFromFile(filename: string) {
+  async generateFromFile(filename: string) {
     const blob = await this.downloadAssets(filename);
     const file = new File([blob], `${filename}.json`);
     await this.loadGraphFromFile(file);
   }
 
-  private downloadAssets(name: string): Promise<Blob> {
+  downloadAssets(name: string): Promise<Blob> {
     return new Promise((resolve) => {
       this.http.get(`assets/${name}.json`, {responseType: 'blob'}).subscribe(data => {
         /* console.log(data) */

@@ -4,38 +4,36 @@ import { CommonModule } from '@angular/common';
 import { Graph } from 'src/app/models/Graph/graph';
 import { GraphService } from 'src/app/services/graph/graph.service';
 import { GameService } from 'src/app/services/game/game.service';
+import { link } from 'fs';
 
 
 export class NaiveGoat implements IStrategy {
 
   actual_place: any;
 
-  action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]): void {
-    let closest;
-        let distance = graph.nodes.length;
-        let edges = graph.edges(this.actual_place);
-        edges.push(this.actual_place);
-        edges = edges.filter(e => (cabbage_positions_index.findIndex(e.index) === -1)) // on ne prend que les sommets qui ne sont pas occupées par les choux
-        for(const e of edges) {
-            let globalDist = 0;
-            for(const t of cabbage_positions_index) {
-                const d = graph.distance(e, t); // On calcule la distance entre tous les sommets occupées par les choux et 
-                globalDist += d !== -1 ? d : 0;
-            }
-
-            if(!closest || globalDist <= distance) {
-                closest = e;
-                distance = globalDist;
-            }
+  action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]): any {
+    let closest = graph.edges(goat_position_index);
+    let distance = graph.nodes.length;
+    let liste_dist = [];
+    for(const l of closest) {
+      let min = graph.distance(l, cabbage_positions_index[0]);
+      for(const t of cabbage_positions_index){
+        const d = graph.distance(l, t); // On calcule la distance entre tous les sommets occupées par les choux et celui de la chèvre
+        if (min >= d){
+          min = d;
         }
-        this.actual_place = closest;
-        return this.actual_place;
+      }
+      liste_dist.push(min)
+    }
+    let min = Math.min(...liste_dist)
+    let objectif = closest[liste_dist.indexOf(min)]
+    return objectif;
   }
 
   placement(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
     this.actual_place = graph.getRandomEdge();
     return this.actual_place;
   }
-  
+
  
 }

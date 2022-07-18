@@ -152,7 +152,7 @@ export class GameService {
         }
       }
       this.gameService.setOpponentType(this.selectedOpponentType);
-      this.gameService.setThiefSpeed(this.config['thiefSpeed']);
+      this.gameService.setThiefSpeed(this.config['collectSpeed']);
       if (this.selectedOpponentType === 'ai') {
         this.gameService.setAiSide(this.selectedAi);
       } else {
@@ -228,7 +228,7 @@ export class GameService {
           d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
           .text(() => "Le ramasseur de choux réfléchit à son coup...")
-          let pos = this.action(this.graphService.getGraph(), this.cops_position, this.thiefs_position);
+          let pos = this.action(this.graph, this.goat_position_index, this.cabbage_positions_index);
           this.updateCabbagePosition(pos);
           this.validateTurnCallback();
         }
@@ -242,9 +242,8 @@ export class GameService {
         else{ //C'est au tour de l'ia et il joue la chèvre
           d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
-          .text(() => "La chèvre réfléchit à son coup")
-          let pos = this.action(this.graphService.getGraph(), this.cops_position, this.thiefs_position);
-          this.updateGoatPosition(pos);
+          .text(() => "La chèvre réfléchit à son coup...")
+          this.action(this.graphService.getGraph(), this.cops_position, this.cabbage_positions_index);
           this.validateTurnCallback();
         }
       }
@@ -284,7 +283,7 @@ export class GameService {
     }
   }
 
-  private updateCabbagePosition(positions) {
+  private updateCabbagePosition(positions : any) {
     for(const cabbage of positions) {
       const idx = this.cabbage_positions.findIndex(c =>{
         return c.index == cabbage.attr('index') 

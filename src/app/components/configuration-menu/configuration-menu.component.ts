@@ -97,7 +97,7 @@ export class ConfigurationMenuComponent implements OnInit {
       this.gameModeSelected = localStorage.getItem('gameMode')
     }
     if(localStorage.getItem('speed')) {
-      this.config['thiefSpeed'] = +localStorage.getItem('speed')
+      this.config['collectSpeed'] = +localStorage.getItem('speed')
     }
     if(localStorage.getItem('copsNum')) {
       this.config['copsNumber'] = +localStorage.getItem('copsNum')
@@ -225,7 +225,7 @@ export class ConfigurationMenuComponent implements OnInit {
     return classes
   }
 
-  isSelectedGraphType(typology) {
+  isSelectedGraphType(typology : any) {
     return typology === this.selected_configuration ? 'selected' : ''
   }
 
@@ -239,7 +239,7 @@ export class ConfigurationMenuComponent implements OnInit {
     this.updateGraphParams();
   }
   
-  onFileChange(file) {
+  onFileChange(file : File) {
     if (file) {
       this.inputGraphJSONFile = file;
       this.selectedFileName = this.inputGraphJSONFile.name;
@@ -367,9 +367,9 @@ export class ConfigurationMenuComponent implements OnInit {
   getSideName(side: string): string {
     switch (side) {
       case 'goat':
-        return 'Surfer';
+        return 'La Chèvre';
       case 'harvest':
-        return 'Chasseur';
+        return 'Le collecteur de choux';
       default:
         return 'Camp inconnue';
     }
