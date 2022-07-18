@@ -230,7 +230,7 @@ export class GameService {
           .text(() => "Le ramasseur de choux réfléchit à son coup...")
           let pos = this.action(this.graph, this.goat_position_index, this.cabbage_positions_index);
           this.updateCabbagePosition(pos);
-          this.validateTurnCallback();
+          this.validateTurn();
         }
       }
       else{
@@ -243,8 +243,9 @@ export class GameService {
           d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
           .text(() => "La chèvre réfléchit à son coup...")
-          this.action(this.graphService.getGraph(), this.cops_position, this.cabbage_positions_index);
-          this.validateTurnCallback();
+          let pos = this.action(this.graphService.getGraph(), this.cops_position, this.cabbage_positions_index);
+          this.updateGoatPosition(pos);
+          this.validateTurn();
         }
       }
     } else {
