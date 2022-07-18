@@ -15,11 +15,11 @@ export class NaiveGoat implements IStrategy {
         let distance = graph.nodes.length;
         let edges = graph.edges(this.actual_place);
         edges.push(this.actual_place);
-        edges = edges.filter(e => (cabbage_positions_index.findIndex(e.index) !== -1))
+        edges = edges.filter(e => (cabbage_positions_index.findIndex(e.index) === -1)) // on ne prend que les sommets qui ne sont pas occupées par les choux
         for(const e of edges) {
             let globalDist = 0;
             for(const t of cabbage_positions_index) {
-                const d = graph.distance(e, t);
+                const d = graph.distance(e, t); // On calcule la distance entre tous les sommets occupées par les choux et 
                 globalDist += d !== -1 ? d : 0;
             }
 

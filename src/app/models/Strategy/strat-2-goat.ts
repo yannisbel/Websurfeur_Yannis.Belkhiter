@@ -37,7 +37,8 @@ export class Strat2Goat implements IStrategy {
           }
           let liste_diff_ord = liste_diff.sort()
           let h = liste_diff.findIndex(liste_diff_ord[0])
-          return liste_noeuds.indexOf(h)
+          let objectif = liste_noeuds.findIndex(h)
+          return objectif
         }
   }
   
