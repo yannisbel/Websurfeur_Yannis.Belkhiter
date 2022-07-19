@@ -247,9 +247,6 @@ export class GraphService {
   }
   */
 
-  edges(node) {
-    return this.graph.edges(node);
-  }
 
   generateCycle(size: number): Cycle {
     let nodes = this.generatesNodes(size);

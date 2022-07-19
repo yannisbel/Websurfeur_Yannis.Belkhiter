@@ -4,7 +4,6 @@ import { environment } from 'src/environments/environment';
 import { Graph } from '../Graph/graph';
 import { PawnState } from '../PawnState/pawn-state';
 import { PawnStateOnTurn } from '../PawnState/PawnStateOnTurn/pawn-state-on-turn';
-import { IStrategy } from '../Strategy/istrategy';
 
 /* Represent the main pawn (the goat, the web surfeur, etc.) */
 
@@ -20,7 +19,6 @@ export class Pawn {
     private id: string;
     private graph: Graph;
     private gameService: GameService
-    private strategy!: IStrategy;
 
     constructor(role: string, start_point: { index: number, x: number, y: number }, graph: Graph, gameService: GameService) {
         this.role = role;
@@ -47,8 +45,6 @@ export class Pawn {
                     .on('end', this.dragended.bind(this)) as any)
     }
 
-
-
     dragstarted(event: any) {
         this.state.dragstarted(event, this);
     }
@@ -73,51 +69,5 @@ export class Pawn {
     getPosition(): {index: number, x: number, y: number} {
         return this.last_position
     }
-
-
-
-    place(graph, goat, thiefs = []) {
-        //console.log('PLACING')
-        const pos = this.strategy.placement(graph, goat, thiefs);
-        d3.select('.'+this.role)
-            .attr("cx", this.x = pos.x)
-            .attr("cy", this.y = pos.y)
-            .raise();
-        this.lastSlot = pos;
-        this.settedPosition = true;
-        this.firstMove = false;
-        this.state = environment.waitingTurnState;
-    }
-
-    /**
-     * TODO
-     * @param graph 
-     * @param cops 
-     * @param thiefs 
-     */
-    move(graph, cops = [], thiefs = [], c = undefined) {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                this.moveCallback(graph, cops, thiefs)
-                resolve(true);
-            }, 2000)
-        })
-    }
-
-    protected moveCallback(graph, cops, thiefs) {
-        const speed = this.role.includes('cabbage') ? this.gameManager.getCollectSpeed() : 1;
-        const pos = this.strategy.move(graph, cops, thiefs, speed);
-        /* console.log('THIS', this);
-        console.log('POS', pos) */
-        d3.select('.'+this.role)
-            .attr("cx", this.x = pos.x)
-            .attr("cy", this.y = pos.y)
-            .raise();
-        this.lastSlot = pos;
-        this.settedPosition = true;
-        this.firstMove = false;
-        this.state = environment.waitingTurnState;
-    }
-
 
 }

@@ -17,12 +17,12 @@ import { NaiveCabbage } from 'src/app/models/Strategy/naive-cabbage.module';
 export class GameService {
   [x: string]: any;
 
-  private board_configuration: string | undefined;
-  private board_params: number[] = [];
-  private opponent_type: string | undefined;
-  private player_side: string = 'unknown';
-  private graph: Graph;
-  private collect_speed = 1;
+  private _board_configuration: string | undefined;
+  private _board_params: number[] = [];
+  private _opponent_type: string | undefined;
+  private _player_side: string = 'unknown';
+  private _graph!: Graph;
+  private _collect_speed = 1;
 
   public ai_strat!: IStrategy;
 
@@ -31,6 +31,8 @@ export class GameService {
   private goat_turn: boolean = false;
   private goat_win: boolean = false;
   private goat_token: Pawn | undefined;
+  private goat_node: Node;
+  private cabbage_node: Node[];
 
   private goat_position: {x: number, y: number} = { x: -1, y: -1 };
   private cabbage_positions: {index: number, x: number, y: number}[] = [];
@@ -59,9 +61,11 @@ export class GameService {
     }
     
     this.goat_turn = false;
+    this.goat_node = start_point;
 
     if (this.opponent_type === 'ia'){
       this.chooseAIStrat()
+      console.log('c est moi!');
     }
 
     for(const node of this._graph?.nodes) {
@@ -79,10 +83,12 @@ export class GameService {
       this.cabbage_positions.push(node);
     }
 
-    if(this._graph !== undefined) {
-      this.goat_position = { x: start_point.x, y: start_point.y };
-      this.goat_token = new Pawn('goat', start_point, this._graph, this)
-    }
+    this.cabbage_positions = this.cabbage_nodes;
+    console.log('index', start_point.index);
+
+    this.goat_position_index = start_point.index;
+    this.goat_position = { x: start_point.x, y: start_point.y };
+    this.goat_token = new Pawn('goat', start_point, this.graph, this)
 
     this.update();
   }
@@ -169,37 +175,11 @@ export class GameService {
   }
 
   chooseAIStrat() {
-    switch (this.gameMode) {
-      case 'medium':
-        switch (this.graphService.getGraph().typology) {
-          case 'grid':
-            this.ai_strat = new NaiveGoat();
-            break;
-          default:
-            this.ai_strat = new NaiveGoat();
-        }
-        this.ai_strat = new NaiveCabbage();
-        break;
-      case 'extreme':
-      case 'hard':
-        switch (this.graphService.getGraph().typology) {
-          case 'grid':
-            this.ai_strat = new NaiveGoat();
-            break;
-          case 'copsAlwaysWin':
-            this.ai_strat = new NaiveGoat();
-            break;
-          default:
-            this.ai_strat = new NaiveGoat();
-            break;
-        }
-        this.ai_strat = new NaiveCabbage();
-        break;
-      case 'easy':
-      default:
-        this.ai_strat = new NaiveGoat();
-        this.ai_strat =new NaiveCabbage();
-        break;
+    if (this._player_side === 'goat'){
+      this.ai_strat = new NaiveCabbage();
+    }
+    else{
+      this.ai_strat = new NaiveGoat();
     }
   }
 
@@ -212,10 +192,14 @@ export class GameService {
           .text(() => "C'est au tour de la chèvre")
         }
         else{ //C'est au tour de l'ia et il joue le collecteur de choux
+          this.chooseAIStrat();
+          console.log('cabbage', this.cabbage_position);
           d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
           .text(() => "Le ramasseur de choux réfléchit à son coup...")
-          let pos = this.ai_strat.action(this.graph, this.goat_position_index, this.cabbage_positions_index);
+          console.log("Strategy", this.ai_strat);
+          console.log("position_cabbage", this.cabbage_position_index);
+          let pos = this.ai_strat.action(this.graph, this.goat_node, this.cabbage_nodes);
           console.log(pos);
           this.updateCabbagePosition(pos);
           this.validateTurn();
@@ -228,11 +212,14 @@ export class GameService {
           .text(() => "C'est au tour du ramasseur de choux")
         }
         else{ //C'est au tour de l'ia et il joue la chèvre
+          this.chooseAIStrat();
+          console.log('goat', this.goat_position);
           d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
           .text(() => "La chèvre réfléchit à son coup...")
+          console.log("Strategy", this.ai_strat);
+          console.log("position_goat", this.goat_position_index);
           let pos = this.ai_strat.action(this.graph, this.cops_position, this.cabbage_positions_index);
-          console.log(pos);
           this.updateGoatPosition(pos);
           this.validateTurn();
         }
@@ -371,7 +358,7 @@ export class GameService {
 
   get player_side(): string { return this._player_side; }
 
-  get graph(): Graph | undefined { return this._graph; }
+  get graph(): Graph { return this._graph; }
 
   get collect_speed(): number { return this._collect_speed; }
 
@@ -385,7 +372,7 @@ export class GameService {
 
   set player_side(side: string) { this._player_side = side; }
 
-  set graph(graph: Graph | undefined) { this._graph = graph; }
+  set graph(graph: Graph) { this._graph = graph; }
 
   set collect_speed(speed: number) { this._collect_speed = speed; }
 

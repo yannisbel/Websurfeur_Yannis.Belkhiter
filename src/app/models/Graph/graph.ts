@@ -59,6 +59,10 @@ export abstract class Graph {
 
     }
 
+    get_edge(node: any){
+        return this._links[node];
+    }
+
     // Drag & Drop Functions
     dragstarted(event: any) {
       if(this.allowedToMove) {
@@ -246,40 +250,6 @@ export abstract class Graph {
             }
         }
         return -1;
-    }
-
-    sommets_distance(n1: any, n2: any) {
-        let distance = 0;
-        let marked: any[] = [];
-        marked.push(n1.index);
-        if(n1.index===n2.index) {
-            return marked;
-        }
-
-        
-        let edges = this.edges(n1).filter(e => !(marked.includes(e.index)));
-        
-        while(edges.length > 0) {
-            distance++;
-            for(const e of edges) {
-                if(e.index == n2.index) return marked;
-            }
-            const save =  edges;
-            edges = []
-            for(const e of save) {
-                const temp = this.edges(e).filter(i => !(marked.includes(i.index))).forEach(edge => {
-                    let isIn = false
-                    for(const i of edges) {
-                        if(i.index === edge.index) {
-                            isIn = true;
-                        }
-                    }
-                    if(!isIn) edges.push(edge)
-                })
-                marked.push(e.index);
-            }
-        }
-        return [];
     }
 
     /* ---------- PROPERTIES ---------- */

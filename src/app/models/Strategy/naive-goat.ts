@@ -11,13 +11,13 @@ export class NaiveGoat implements IStrategy {
 
   actual_place: any;
 
-  public action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]): any {
-    let closest = graph.edges(goat_position_index);
+  public action(graph: Graph, goat_node: Node, cabbage_positions: Node[]): any {
+    let closest = graph.edges(goat_node);
     let distance = graph.nodes.length;
     let liste_dist = [];
     for(const l of closest) {
-      let min = graph.distance(l, cabbage_positions_index[0]);
-      for(const t of cabbage_positions_index){
+      let min = graph.distance(l, cabbage_positions[0]);
+      for(const t of cabbage_positions){
         const d = graph.distance(l, t); // On calcule la distance entre tous les sommets occupées par les choux et celui de la chèvre
         if (min >= d){
           min = d;
@@ -30,7 +30,7 @@ export class NaiveGoat implements IStrategy {
     return objectif;
   }
 
-  public placement(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
+  public placement(graph: Graph, goat_node: Node, cabbage_positions: Node[]) {
     this.actual_place = graph.getRandomEdge();
     return this.actual_place;
   }
