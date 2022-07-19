@@ -21,13 +21,12 @@ export class GameService {
   private board_params: number[] = [];
   private opponent_type: string | undefined;
   private player_side: string = 'unknown';
-  private graph: Graph | undefined;
+  private graph: Graph;
   private collect_speed = 1;
 
-  private svg: any;
+  public ai_strat!: IStrategy;
 
-  private ai_goat_strat: () => IStrategy;
-  private ai_cabbage_strat: () => IStrategy;
+  private svg: any;
 
   private goat_turn: boolean = false;
   private goat_win: boolean = false;
@@ -42,7 +41,9 @@ export class GameService {
 
   private replayCallback: () => void = () => {};
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) { 
+
+  }
 
   /* Functions for game */
 
@@ -58,6 +59,10 @@ export class GameService {
     }
     
     this.goat_turn = false;
+
+    if (this.opponent_type === 'ia'){
+      this.chooseAIStrat()
+    }
 
     for(const node of this._graph?.nodes) {
       if(node.index === start_point.index) continue;
@@ -168,50 +173,32 @@ export class GameService {
       case 'medium':
         switch (this.graphService.getGraph().typology) {
           case 'grid':
-            this.ai_goat_strat = () => {
-              return new NaiveGoat();
-            };
+            this.ai_strat = new NaiveGoat();
             break;
           default:
-            this.ai_goat_strat = () => {
-              return new NaiveGoat();
-            }
+            this.ai_strat = new NaiveGoat();
         }
-        this.ai_cabbage_strat = () => {
-          return new NaiveCabbage();
-        };
+        this.ai_strat = new NaiveCabbage();
         break;
       case 'extreme':
       case 'hard':
         switch (this.graphService.getGraph().typology) {
           case 'grid':
-            this.ai_goat_strat = () => {
-              return new NaiveGoat();
-            };
+            this.ai_strat = new NaiveGoat();
             break;
           case 'copsAlwaysWin':
-            this.ai_goat_strat = () => {
-              return new NaiveGoat();
-            };
+            this.ai_strat = new NaiveGoat();
             break;
           default:
-            this.ai_goat_strat = () => {
-              return new NaiveGoat();
-            };
+            this.ai_strat = new NaiveGoat();
             break;
         }
-        this.ai_cabbage_strat = () => {
-          return new NaiveCabbage();
-        };
+        this.ai_strat = new NaiveCabbage();
         break;
       case 'easy':
       default:
-        this.ai_goat_strat = () => {
-          return new NaiveGoat();
-        };
-        this.ai_cabbage_strat = () => {
-          return new NaiveCabbage();
-        };
+        this.ai_strat = new NaiveGoat();
+        this.ai_strat =new NaiveCabbage();
         break;
     }
   }
@@ -228,7 +215,8 @@ export class GameService {
           d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
           .text(() => "Le ramasseur de choux réfléchit à son coup...")
-          let pos = this.action(this.graph, this.goat_position_index, this.cabbage_positions_index);
+          let pos = this.ai_strat.action(this.graph, this.goat_position_index, this.cabbage_positions_index);
+          console.log(pos);
           this.updateCabbagePosition(pos);
           this.validateTurn();
         }
@@ -243,7 +231,8 @@ export class GameService {
           d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
           .text(() => "La chèvre réfléchit à son coup...")
-          let pos = this.action(this.graphService.getGraph(), this.cops_position, this.cabbage_positions_index);
+          let pos = this.ai_strat.action(this.graph, this.cops_position, this.cabbage_positions_index);
+          console.log(pos);
           this.updateGoatPosition(pos);
           this.validateTurn();
         }

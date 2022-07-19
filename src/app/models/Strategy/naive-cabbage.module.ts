@@ -8,14 +8,14 @@ export class NaiveCabbage implements IStrategy {
 
   actual_place: any;
 
-  placement(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
+  public placement(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
     let edges = graph.edges(this.actual_place);
     edges.push(this.actual_place)
     edges = edges.filter(e => !(goat_position_index == e.index))
     return edges;
   }
 
-  action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
+  public action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
     let closest;
     let distance = graph.nodes.length;
     let edges = graph.edges(this.actual_place);

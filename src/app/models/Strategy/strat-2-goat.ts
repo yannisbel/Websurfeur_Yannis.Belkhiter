@@ -6,7 +6,7 @@ import { Graph } from 'src/app/models/Graph/graph';
 export class Strat2Goat implements IStrategy {
   [x: string]: any;
 
-  action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
+  public action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
     let goat_node = graph.nodes(goat_position_index);
     let closest;
     let alfa = [];
@@ -42,7 +42,7 @@ export class Strat2Goat implements IStrategy {
         }
   }
   
-  placement(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
+  public placement(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
     this.actual_place = graph.getRandomEdge();
     return this.actual_place;
   }

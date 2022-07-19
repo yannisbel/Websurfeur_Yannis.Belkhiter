@@ -11,7 +11,7 @@ export class NaiveGoat implements IStrategy {
 
   actual_place: any;
 
-  action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]): any {
+  public action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]): any {
     let closest = graph.edges(goat_position_index);
     let distance = graph.nodes.length;
     let liste_dist = [];
@@ -30,7 +30,7 @@ export class NaiveGoat implements IStrategy {
     return objectif;
   }
 
-  placement(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
+  public placement(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
     this.actual_place = graph.getRandomEdge();
     return this.actual_place;
   }
