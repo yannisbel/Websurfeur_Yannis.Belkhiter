@@ -161,19 +161,16 @@ export abstract class Graph {
      * @param {any} node - from where you need to computes edges
      * @returns {SimulationNodeDatum[]} list of edges of the node param
      */
-    edges(node: any, speed = 1, exclude= []): SimulationNodeDatum[] {
+    edges(index: number, speed = 1, exclude= []): number[] {
         const edges = [];
-        if(node.index === undefined) {
-            node = node.__data__
-        }
         for(const l of this.links) {
-            if(l.source.index === node.index) {
+            if(l.source.index === index) {
                 edges.push(this._nodes.find((n: any) => n.index === l.target.index))
-            } else if (l.target.index === node.index) {
+            } else if (l.target.index === index) {
                 edges.push(this._nodes.find((n: any) => n.index === l.source.index))
-            } else if (l.source === node.index) {
+            } else if (l.source === index) {
                 edges.push(this._nodes.find((n: any) => n.index === l.target))
-            } else if (l.target === node.index) {
+            } else if (l.target === index) {
                 edges.push(this._nodes.find((n: any) => n.index === l.source))
             }
         }
@@ -218,9 +215,13 @@ export abstract class Graph {
         return edges[this.getRandomInt(edges.length)];
     }
 
-    distance(n1: any, n2: any) {
+    distance(n1: Node, n2: Node) {
+        if(n2.index === undefined) { // DO NOT CHANGE TO if(!n2.index) because index use number
+            n2 = {index: +n2}
+        }
+
         let distance = 0;
-        let marked: any[] = [];
+        let marked = [];
         marked.push(n1.index);
         if(n1.index===n2.index) {
             return distance;

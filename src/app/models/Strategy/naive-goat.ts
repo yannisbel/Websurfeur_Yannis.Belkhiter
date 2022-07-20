@@ -7,33 +7,18 @@ import { GameService } from 'src/app/services/game/game.service';
 import { link } from 'fs';
 
 
-export class NaiveGoat implements IStrategy {
+export class RandomGoat implements IStrategy {
 
   actual_place: any;
 
-  public action(graph: Graph, goat_node: Node, cabbage_positions: Node[]): any {
-    let closest = graph.edges(goat_node);
-    let distance = graph.nodes.length;
-    let liste_dist = [];
-    for(const l of closest) {
-      let min = graph.distance(l, cabbage_positions[0]);
-      for(const t of cabbage_positions){
-        const d = graph.distance(l, t); // On calcule la distance entre tous les sommets occupées par les choux et celui de la chèvre
-        if (min >= d){
-          min = d;
-        }
-      }
-      liste_dist.push(min)
-    }
-    let min = Math.min(...liste_dist)
-    let objectif = closest[liste_dist.indexOf(min)]
+  public action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]): any {
+    let voisins = graph.edges(goat_position_index);
+    let objectif = voisins[Math.floor(Math.random() * voisins.length)]
     return objectif;
   }
 
-  public placement(graph: Graph, goat_node: Node, cabbage_positions: Node[]) {
-    this.actual_place = graph.getRandomEdge();
-    return this.actual_place;
+  placement(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]) {
+    return 0;
   }
-
  
 }

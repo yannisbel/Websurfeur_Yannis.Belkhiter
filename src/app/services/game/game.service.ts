@@ -8,7 +8,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { Strat2Goat } from 'src/app/models/Strategy/strat-2-goat';
 import { IStrategy } from 'src/app/models/Strategy/istrategy';
 import { GraphService } from '../graph/graph.service';
-import { NaiveGoat } from 'src/app/models/Strategy/naive-goat';
+import { NaiveGoat, RandomGoat } from 'src/app/models/Strategy/naive-goat';
 import { NaiveCabbage } from 'src/app/models/Strategy/naive-cabbage.module';
 
 @Injectable({
@@ -31,12 +31,11 @@ export class GameService {
   private goat_turn: boolean = false;
   private goat_win: boolean = false;
   private goat_token: Pawn | undefined;
-  private goat_node: Node;
-  private cabbage_node: Node[];
 
   private goat_position: {x: number, y: number} = { x: -1, y: -1 };
   private cabbage_positions: {index: number, x: number, y: number}[] = [];
   private collected_cabbages: any[] = [];
+  private cabbage_position_index: number[] = [];
 
   private collector_color = '#4dc738';
   private goat_color = '#b56528';
@@ -61,7 +60,6 @@ export class GameService {
     }
     
     this.goat_turn = false;
-    this.goat_node = start_point;
 
     if (this.opponent_type === 'ia'){
       this.chooseAIStrat()
@@ -83,13 +81,15 @@ export class GameService {
       this.cabbage_positions.push(node);
     }
 
-    this.cabbage_positions = this.cabbage_nodes;
     console.log('index', start_point.index);
 
     this.goat_position_index = start_point.index;
     this.goat_position = { x: start_point.x, y: start_point.y };
     this.goat_token = new Pawn('goat', start_point, this.graph, this)
-
+    for (const c of this.cabbage_positions){
+      this.cabbage_position_index.push(c.index);
+    }
+    console.log('liste des choux', this.cabbage_position_index);
     this.update();
   }
 
@@ -179,7 +179,7 @@ export class GameService {
       this.ai_strat = new NaiveCabbage();
     }
     else{
-      this.ai_strat = new NaiveGoat();
+      this.ai_strat = new RandomGoat();
     }
   }
 
@@ -199,7 +199,7 @@ export class GameService {
           .text(() => "Le ramasseur de choux réfléchit à son coup...")
           console.log("Strategy", this.ai_strat);
           console.log("position_cabbage", this.cabbage_position_index);
-          let pos = this.ai_strat.action(this.graph, this.goat_node, this.cabbage_nodes);
+          let pos = this.ai_strat.action(this.graph, this.goat_position_index, this.cabbage_positions_index);
           console.log(pos);
           this.updateCabbagePosition(pos);
           this.validateTurn();
@@ -213,14 +213,18 @@ export class GameService {
         }
         else{ //C'est au tour de l'ia et il joue la chèvre
           this.chooseAIStrat();
+          let voisins = this._graph.edges(this.goat_position_index);
+          console.log("voisin", voisins);
           console.log('goat', this.goat_position);
           d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
           .text(() => "La chèvre réfléchit à son coup...")
           console.log("Strategy", this.ai_strat);
           console.log("position_goat", this.goat_position_index);
-          let pos = this.ai_strat.action(this.graph, this.cops_position, this.cabbage_positions_index);
+          let pos = this.ai_strat.action(this.graph, this.goat_position_index, this.cabbage_positions_index);
+          console.log('solution retenue', pos);
           this.updateGoatPosition(pos);
+          this.goat_token?.setState(pos);
           this.validateTurn();
         }
       }
@@ -252,8 +256,9 @@ export class GameService {
     return this.goat_win || this.cabbage_positions.length === 0;
   }
 
-  private updateGoatPosition(new_goat_position: {index: number, x: number, y: number}) {
-    this.goat_position = {...new_goat_position}
+  private updateGoatPosition(new_goat_position: Node) {
+    this.goat_position_index = new_goat_position.index;
+    this.goat_position = this._graph.nodes.findIndex(n => n.index === this.goat_position_index);
     const idx = this.cabbage_positions.findIndex(n => n.index === new_goat_position.index)
     if(idx !== -1) {
       this.goat_win = true;
