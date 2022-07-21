@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IStrategy } from './istrategy';
 import { Graph } from 'src/app/models/Graph/graph';
+import * as d3 from 'd3';
 
 
 export class NaiveCabbage implements IStrategy {
@@ -15,20 +16,17 @@ export class NaiveCabbage implements IStrategy {
     return edges;
   }
 
-  public action(graph: Graph, goat_position: Node, cabbage_positions: Node[], collectSpeed: number) {
-    let closest = graph.edges(goat_position);
+  public action(graph: Graph, goat_position: { index: number, x: number, y: number }, cabbage_positions: { index: number, x: number, y: number }[], collectSpeed: number) {
+    let res = [];
     let s = collectSpeed;
-    let collect = [];
-    for (const x of graph.nodes){
-      if (x.index !== goat_position.index && s !== 0 && cabbage_positions.includes(x.index)){
-        collect.push(x);
-        s -= 1;
-      }
-      if (s === 0){
-        return collect;
+    for (const cabbage of cabbage_positions){
+      if(goat_position.index !== cabbage.index && s !== 0){
+        const selected_target = d3.select('#'+'cabbage'+cabbage.index);
+        res.push(selected_target);
+        s = s-1
       }
     }
-    return collect;
+    return res;
   }
 }
 

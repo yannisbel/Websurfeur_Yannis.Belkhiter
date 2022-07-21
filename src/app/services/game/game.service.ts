@@ -153,15 +153,14 @@ export class GameService {
         }
         else{ //C'est au tour de l'ia et il joue le collecteur de choux
           this.chooseAIStrat();
-          console.log('cabbage', this.cabbage_position_index);
+          console.log('cabbage', this.cabbage_position);
           d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
           .text(() => "Le ramasseur de choux réfléchit à son coup...")
           console.log("Strategy", this.ai_strat);
-          let pos = this.ai_strat.action(this.graph, this.goat_position, this.cabbage_positions_index, this.collect_speed);
-          console.log(pos);
-          this.collected_cabbages.push(pos);
-          console.log('résultats', this.collected_cabbages);
+          let pos = this.ai_strat.action(this.graph, this.goat_position, this.cabbage_positions, this.collect_speed);
+          this.collected_cabbages = pos;
+          console.log('choux à retirer', this.collected_cabbages);
           this.collectCabbages();
           this.validateTurn();
         }
@@ -176,23 +175,23 @@ export class GameService {
           this.chooseAIStrat();
           //let voisins = this._graph.edges(this.goat_position_index); c'etait pour voir si la fonction edges fonctionne, c'est le cas :)
           //console.log("voisin", voisins);
-          console.log('goat', this.goat_position);
+          //console.log('goat', this.goat_position);
           d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
           .text(() => "La chèvre réfléchit à son coup...")
-          console.log("Strategy", this.ai_strat);
-          console.log("position_goat", this.goat_position);
+          //console.log("Strategy", this.ai_strat);
+          //console.log("position_goat", this.goat_position);
           let pos = this.ai_strat.action(this.graph, this.goat_position, this.cabbage_positions, this.collect_speed);
-          console.log('solution retenue', pos);
-          console.log('liste choux', this.cabbage_positions);
+          //console.log('solution retenue', pos);
+          //console.log('liste choux', this.cabbage_positions);
           this.goat_position = pos;
           this.goat_position_index = pos.index;
           this.goat_token?.updatePosition(pos);
           this.validateTurn();
-          console.log('Nouvelle position du mec', this.goat_token?.getPosition());
-          console.log('this.id', d3.select('#this.id'));
-          console.log('pion_chèvre', this.goat_token);
-          this.goat_token = new Pawn('goat', this.goat_token?.getPosition(), this.graph, this)
+          //console.log('Nouvelle position du mec', this.goat_token?.getPosition());
+          //console.log('this.id', d3.select('#this.id'));
+          //console.log('pion_chèvre', this.goat_token);
+          //this.goat_token = new Pawn('goat', this.goat_token?.getPosition(), this.graph, this)
         }
       }
     } else {
@@ -236,6 +235,7 @@ export class GameService {
       this.updateGoatPosition(this.goat_token?.getPosition() as any);
       this.goat_token?.setState(environment.pawnWaitingTurn);
     } else {
+      console.log('hello', this.collected_cabbages);
       this.collectCabbages();
       this.goat_token?.setState(environment.pawnOnTurn)
     }
@@ -269,7 +269,7 @@ export class GameService {
   private collectCabbages() {
     for(const cabbage of this.collected_cabbages) {
       const idx = this.cabbage_positions.findIndex(c =>{
-        return c.index == cabbage.attr('index') 
+        return c.index == cabbage.attr('index')
       })
       
       if(idx !== -1) {

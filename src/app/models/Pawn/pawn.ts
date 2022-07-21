@@ -73,8 +73,12 @@ export class Pawn {
 
     updatePosition(node: { index: number, x: number, y: number }) {
         this.last_position = node
-        d3.select('#goat-pawn')
-                .remove()
+        this.x = node.x
+        this.y = node.y
+        d3.select('#' + this.id)
+                  .attr("cx", this.x)
+                  .attr("cy", this.y)
+                  .raise();
       }
 
 }
