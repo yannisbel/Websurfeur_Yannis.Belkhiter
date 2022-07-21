@@ -192,7 +192,7 @@ export class GameService {
           console.log('Nouvelle position du mec', this.goat_token?.getPosition());
           console.log('this.id', d3.select('#this.id'));
           console.log('pion_chèvre', this.goat_token);
-          //this.goat_token = new Pawn('goat', this.goat_token?.getPosition(), this.graph, this)
+          this.goat_token = new Pawn('goat', this.goat_token?.getPosition(), this.graph, this)
         }
       }
     } else {
