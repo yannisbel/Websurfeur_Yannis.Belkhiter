@@ -54,7 +54,7 @@ export class AdventureService {
     if(level !== undefined) {
       await this.graphService.generateGraph(level.getGraphType(), level.getGraphParams());
       this.gameService.setOpponentType('ai');
-      this.gameService.setThiefSpeed(level.getCollectSpeed());
+      this.gameService.setCollect_speed(level.getCollectSpeed());
       this.gameService.setAiSide(level.getAiSide());
       extras = {
         queryParams: {

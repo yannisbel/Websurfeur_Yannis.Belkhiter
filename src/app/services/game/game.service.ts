@@ -315,11 +315,30 @@ export class GameService {
 
   get player_side(): string { return this._player_side; }
 
+  setAiSide(ai: string) { this._opponent_type = ai}
+
   get graph(): Graph { return this._graph; }
 
   get collect_speed(): number { return this._collect_speed; }
 
   /* Setters */
+
+  setIsAdventure(adventure) {
+    this.isAdventure = adventure;
+  }
+
+  setAdventure(adventure) {
+    this.adventure = adventure
+  }
+
+  
+  setEndLevelCallback(callback) {
+    this.endLevelCallback = callback;
+  }
+
+  setDisplayWarningZone(callback) {
+    this.displayWarningZone = callback;
+  }
 
   set board_conf(conf: string) { this._board_configuration = conf; }
 
@@ -332,6 +351,8 @@ export class GameService {
   set graph(graph: Graph) { this._graph = graph; }
 
   set collect_speed(speed: number) { this._collect_speed = speed; }
+
+  setCollect_speed(speed: number)  { this._collect_speed = speed; }
 
   setReplayCallback(callback: () => void) {
     this.replayCallback = callback;

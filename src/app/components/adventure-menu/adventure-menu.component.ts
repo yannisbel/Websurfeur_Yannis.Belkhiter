@@ -36,7 +36,7 @@ export class AdventureMenuComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/game-mode-selection'])
+    this.router.navigate(['/app-adventure-menu'])
   }
 
 }
