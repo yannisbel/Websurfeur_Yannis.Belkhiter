@@ -59,10 +59,6 @@ export abstract class Graph {
 
     }
 
-    get_edge(node: any){
-        return this._links[node];
-    }
-
     // Drag & Drop Functions
     dragstarted(event: any) {
       if(this.allowedToMove) {
@@ -161,16 +157,16 @@ export abstract class Graph {
      * @param {any} node - from where you need to computes edges
      * @returns {SimulationNodeDatum[]} list of edges of the node param
      */
-    edges(index: number, speed = 1, exclude= []): number[] {
+     edges(node: { index: number, x: number, y: number}, speed = 1, exclude= []): SimulationNodeDatum[] {
         const edges = [];
         for(const l of this.links) {
-            if(l.source.index === index) {
+            if(l.source.index === node.index) {
                 edges.push(this._nodes.find((n: any) => n.index === l.target.index))
-            } else if (l.target.index === index) {
+            } else if (l.target.index === node.index) {
                 edges.push(this._nodes.find((n: any) => n.index === l.source.index))
-            } else if (l.source === index) {
+            } else if (l.source === node.index) {
                 edges.push(this._nodes.find((n: any) => n.index === l.target))
-            } else if (l.target === index) {
+            } else if (l.target === node.index) {
                 edges.push(this._nodes.find((n: any) => n.index === l.source))
             }
         }

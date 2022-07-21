@@ -1,3 +1,4 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import * as d3 from 'd3';
 import { GameService } from 'src/app/services/game/game.service';
 import { environment } from 'src/environments/environment';
@@ -69,5 +70,14 @@ export class Pawn {
     getPosition(): {index: number, x: number, y: number} {
         return this.last_position
     }
+
+    updatePosition(node: { index: number, x: number, y: number }) {
+        this.last_position = node
+        d3.select('#this.id')
+                  .attr("cx", this.x = node.x)
+                  .attr("cy", this.y = node.y)
+                  .raise()
+        
+      }
 
 }

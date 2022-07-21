@@ -11,8 +11,8 @@ export class RandomGoat implements IStrategy {
 
   actual_place: any;
 
-  public action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[]): any {
-    let voisins = graph.edges(goat_position_index);
+  public action(graph: Graph, goat_position: { index: number, x: number, y: number }, cabbage_positions: Node[], collectSpeed: number): any {
+    let voisins = graph.edges(goat_position);
     let objectif = voisins[Math.floor(Math.random() * voisins.length)]
     return objectif;
   }

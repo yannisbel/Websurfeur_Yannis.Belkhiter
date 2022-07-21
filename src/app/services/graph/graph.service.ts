@@ -15,8 +15,11 @@ import { Specific } from 'src/app/models/Graph/Specific/specific';
   providedIn: 'root'
 })
 export class GraphService {
+  [x: string]: any;
 
   private graph: Graph | undefined;
+
+  private 
 
   private inputFile!: File;
 
@@ -246,7 +249,6 @@ export class GraphService {
 
   }
   */
-
 
   generateCycle(size: number): Cycle {
     let nodes = this.generatesNodes(size);

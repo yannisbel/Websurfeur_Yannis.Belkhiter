@@ -4,7 +4,7 @@ import { IStrategy } from './istrategy';
 import { Graph } from 'src/app/models/Graph/graph';
 
 
-export class NaiveCabbage2 implements IStrategy {
+export class NaiveCabbage implements IStrategy {
 
   actual_place: any;
 
@@ -15,25 +15,20 @@ export class NaiveCabbage2 implements IStrategy {
     return edges;
   }
 
-  public action(graph: Graph, goat_position_index: number, cabbage_positions_index: number[], collectSpeed: number) {
-    let closest = graph.edges(goat_position_index);
+  public action(graph: Graph, goat_position: Node, cabbage_positions: Node[], collectSpeed: number) {
+    let closest = graph.edges(goat_position);
     let s = collectSpeed;
-    let erase = [];
-    for ( const p of closest){
-      if (s === 0){
-        return erase;
+    let collect = [];
+    for (const x of graph.nodes){
+      if (x.index !== goat_position.index && s !== 0 && cabbage_positions.includes(x.index)){
+        collect.push(x);
+        s -= 1;
       }
-      erase.push(p)
-      s -= 1
-    }
-    for (const x of cabbage_positions_index){
       if (s === 0){
-        return erase;
+        return collect;
       }
-      erase.push(x)
-      s -= 1
     }
-    return erase;
+    return collect;
   }
 }
 
