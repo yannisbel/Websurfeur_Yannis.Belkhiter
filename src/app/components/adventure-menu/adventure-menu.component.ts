@@ -32,6 +32,7 @@ export class AdventureMenuComponent implements OnInit {
   }
 
   launchAdventure() {
+    //console.log(this.selected_adventure);
     this.adventureService.launchAdventure(this.selected_adventure);
   }
 

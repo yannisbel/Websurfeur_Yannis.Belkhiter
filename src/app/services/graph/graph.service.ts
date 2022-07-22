@@ -19,8 +19,6 @@ export class GraphService {
 
   private graph: Graph | undefined;
 
-  private 
-
   private inputFile!: File;
 
   constructor(private router: Router, private http: HttpClient) {

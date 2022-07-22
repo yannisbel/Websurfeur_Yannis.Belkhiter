@@ -8,7 +8,7 @@
         <!-- Explications d'aventure -->
         <div *ngFor="let adventure of adventures; let i = index" class="adventure card" [class]="isSelected(adventure)" (click)="selectAdventure(adventure)">
             <img [src]="adventure.picture" width="100px"/>
-            <span>{{adventure.getName()}}</span>
+            <span>{{selected_adventure.getName()}}</span>
         </div>
     </div>
     <div class="buttons card">

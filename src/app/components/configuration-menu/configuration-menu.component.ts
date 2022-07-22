@@ -399,7 +399,6 @@ export class ConfigurationMenuComponent implements OnInit {
     this.gameService.board_params = params;
     this.gameService.graph = this.graphService.generateGraph(this.selected_configuration, params);
     this.gameService.collect_speed = this.collect_speed;
-    
     this.router.navigate(['/board'])
   }
 

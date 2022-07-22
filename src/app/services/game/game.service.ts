@@ -11,6 +11,7 @@ import { GraphService } from '../graph/graph.service';
 import { NaiveGoat, RandomGoat } from 'src/app/models/Strategy/naive-goat';
 import { NaiveCabbage } from 'src/app/models/Strategy/naive-cabbage';
 import { leastIndex } from 'd3';
+import { AdventureLevel } from 'src/app/models/Adventure/AdventureLevel/adventure-level';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,7 @@ export class GameService {
   private _player_side: string = 'unknown';
   private _graph!: Graph;
   private _collect_speed = 1;
+  public isAdventure = false;
 
   public ai_strat!: IStrategy;
 
@@ -51,6 +53,7 @@ export class GameService {
 
   startGame(svg: any): void {
     console.log('Starting game');
+
     this.svg = svg;
     let start_point;
     switch(this._graph?.typology) {
@@ -59,6 +62,8 @@ export class GameService {
         start_point = this._graph?.nodes[0];
         break;
     }
+
+    console.log('okay', this.isAdventure);
     
     this.goat_turn = false;
 
@@ -194,20 +199,8 @@ export class GameService {
           //this.goat_token = new Pawn('goat', this.goat_token?.getPosition(), this.graph, this)
         }
       }
-    } else {
-      if(this.goat_turn === true) {
-        d3.select('#details-informations')
-          .style('color', `${this.goat_color}`)
-          .text(() => "C'est au tour de la chèvre")
-      } else if(!this.goat_turn) {
-        d3.select('#details-informations')
-          .style('color', `${this.collector_color}`)
-          .text(() => "C'est au tour du collecteur de choux");
-        this.displayCollectCount();
-      }
     }
   }
-  
 
 
   private displayCollectCount() {
@@ -321,6 +314,12 @@ export class GameService {
 
   get collect_speed(): number { return this._collect_speed; }
 
+  getAdventurePlayerRole() {
+    return this.adventure.getCurrentLevel().getPlayerRoleName();
+  }
+
+
+
   /* Setters */
 
   setIsAdventure(adventure) {
@@ -328,7 +327,8 @@ export class GameService {
   }
 
   setAdventure(adventure) {
-    this.adventure = adventure
+    this.adventure = adventure;
+    this.isAdventure = true;
   }
 
   
@@ -349,6 +349,9 @@ export class GameService {
   set player_side(side: string) { this._player_side = side; }
 
   set graph(graph: Graph) { this._graph = graph; }
+
+  setGraph(graph: Graph) { this._graph = graph; }
+
 
   set collect_speed(speed: number) { this._collect_speed = speed; }
 
