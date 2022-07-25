@@ -27,16 +27,6 @@ export class AdventureService {
   launchAdventure(adventure: Adventure) {
     this.currentAdventure = adventure;
     this.currentAdventure.reset();
-    const level = this.currentAdventure.getCurrentLevel();
-    this.graph = this.graphService.generateGraph(level.getGraphType(), level.getGraphParams());
-    this.gameService.setGraph(this.graph);
-    this.gameService.setOpponentType('ai');
-    if (level.getAiSide() === 'goat'){
-      this.gameService.set_player_side = 'cabbage';
-    }else{
-      this.gameService.set_player_side = 'cabbage';
-    }
-    this.gameService.setCollect_speed(level.getCollectSpeed());
     this.gameService.setAdventure(this.currentAdventure);
     this.gameService.setEndLevelCallback(this.launchNextLevel.bind(this));
     this.launchNextLevel();
@@ -53,7 +43,7 @@ export class AdventureService {
       Swal.fire({
         html: mes
       })
-      this.router.navigate(['/board'], extras);
+      this.router.navigate(['/board']);
       return false;
     } else {
       this.router.navigate(['/adventure-menu']);
@@ -66,16 +56,23 @@ export class AdventureService {
     console.log(level)
     let extras: NavigationExtras = undefined;
     if(level !== undefined) {
-      this.graphService.generateGraph(level.getGraphType(), level.getGraphParams());
+      this.graph = this.graphService.generateGraph(level.getGraphType(), level.getGraphParams());
+      this.gameService.setGraph(this.graph);
+      console.log('fcb', this.graph)
       this.gameService.setOpponentType('ai');
+      if (level.getAiSide() === 'goat'){
+        this.gameService.set_player_side = 'cabbage';
+      }else{
+        this.gameService.set_player_side = 'cabbage';
+      }
       this.gameService.setCollect_speed(level.getCollectSpeed());
-      this.gameService.setAiSide(level.getAiSide());
       extras = {
         queryParams: {
           gameMode: level.getDifficulty(),
           adventure: true
         }
       }
+      this.gameService.update();
       return extras;
     }
   }

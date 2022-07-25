@@ -5,7 +5,6 @@ import { Mode } from "./mode";
 
 // Introduction
 const intro: Adventure = new Adventure('Introduction', Mode.CLASSIC, 'intro', [
-    new AdventureLevel('path', [10, 1], 1, 'cabbage', Difficulty.NORMAL),
     new AdventureLevel('cycle', [10], 1, 'goat', Difficulty.NORMAL),
     new AdventureLevel('grid', [4, 4], 1, 'cabbage', Difficulty.NORMAL),
     new AdventureLevel('tree', [15, 3], 1, 'goat', Difficulty.NORMAL),

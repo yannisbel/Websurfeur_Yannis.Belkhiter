@@ -53,7 +53,7 @@ export class GameService {
 
   startGame(svg: any): void {
     console.log('Starting game');
-
+    console.log(this._graph)
     this.svg = svg;
     let start_point;
     switch(this._graph?.typology) {
@@ -65,8 +65,6 @@ export class GameService {
 
     console.log('okay', this.isAdventure);
     
-    this.goat_turn = false;
-
     if (this.opponent_type === 'ia'){
       this.chooseAIStrat();
       console.log('c est moi!');
@@ -86,17 +84,19 @@ export class GameService {
         })
       this.cabbage_positions.push(node);
     }
-
+/*
     d3.select('#details-informations')
     .style('color', `${this.collector_color}`)
     .text(() => "C'est au tour du collecteur de choux");
     this.displayCollectCount();
-
+*/
     console.log('cabbage', this.cabbage_positions);
     console.log('index', start_point.index);
 
     this.goat_position = start_point;
-    this.goat_token = new Pawn('goat', start_point, this.graph, this)
+    this.goat_token = new Pawn('goat', start_point, this.graph, this);
+    this.goat_turn = false;
+    this.update();
   }
 
   private handleClickOnCabbage(target: EventTarget) {
@@ -181,6 +181,7 @@ export class GameService {
           //let voisins = this._graph.edges(this.goat_position_index); c'etait pour voir si la fonction edges fonctionne, c'est le cas :)
           //console.log("voisin", voisins);
           //console.log('goat', this.goat_position);
+          console.log('hello_world')
           d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
           .text(() => "La chèvre réfléchit à son coup...")
@@ -199,7 +200,19 @@ export class GameService {
           //this.goat_token = new Pawn('goat', this.goat_token?.getPosition(), this.graph, this)
         }
       }
+    }  else {
+      if(this.goat_turn === true) {
+        d3.select('#details-informations')
+          .style('color', `${this.goat_color}`)
+          .text(() => "C'est au tour de la chèvre")
+      } else if(!this.goat_turn) {
+        d3.select('#details-informations')
+          .style('color', `${this.collector_color}`)
+          .text(() => "C'est au tour du collecteur de choux");
+        this.displayCollectCount();
+      }
     }
+
   }
 
 

@@ -32,12 +32,11 @@ export class AdventureMenuComponent implements OnInit {
   }
 
   launchAdventure() {
-    //console.log(this.selected_adventure);
     this.adventureService.launchAdventure(this.selected_adventure);
   }
 
   goBack() {
-    this.router.navigate(['/app-adventure-menu'])
+    this.router.navigate(['/game-mode-selection'])
   }
 
 }
