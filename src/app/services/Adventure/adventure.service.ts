@@ -13,6 +13,9 @@ import { GraphService } from '../graph/graph.service';
   providedIn: 'root'
 })
 export class AdventureService {
+  static launchNextLevel() {
+    throw new Error('Method not implemented.');
+  }
 
   private adventures: Adventure[] = ADVENTURES;
   private currentAdventure: Adventure = null;
@@ -53,12 +56,11 @@ export class AdventureService {
 
   private async configureAdventureNextLevel(adventure: Adventure): Promise<NavigationExtras> {
     const level = this.currentAdventure.getCurrentLevel();
-    console.log(level)
+    console.log('voila le niveau :', level)
     let extras: NavigationExtras = undefined;
     if(level !== undefined) {
       this.graph = this.graphService.generateGraph(level.getGraphType(), level.getGraphParams());
       this.gameService.setGraph(this.graph);
-      console.log('fcb', this.graph)
       this.gameService.setOpponentType('ai');
       if (level.getAiSide() === 'goat'){
         this.gameService.set_player_side = 'cabbage';

@@ -7,11 +7,12 @@ import { environment } from 'src/environments/environment';
 import { NavigationExtras, Router } from '@angular/router';
 import { Strat2Goat } from 'src/app/models/Strategy/strat-2-goat';
 import { IStrategy } from 'src/app/models/Strategy/istrategy';
-import { GraphService } from '../graph/graph.service';
-import { NaiveGoat, RandomGoat } from 'src/app/models/Strategy/naive-goat';
+import { GraphService } from 'src/app/services/graph/graph.service';
+import { RandomGoat } from 'src/app/models/Strategy/naive-goat';
 import { NaiveCabbage } from 'src/app/models/Strategy/naive-cabbage';
 import { leastIndex } from 'd3';
 import { AdventureLevel } from 'src/app/models/Adventure/AdventureLevel/adventure-level';
+import { AdventureService } from '../Adventure/adventure.service';
 
 @Injectable({
   providedIn: 'root'
@@ -64,10 +65,22 @@ export class GameService {
     }
 
     console.log('okay', this.isAdventure);
-    
+    console.log('lets go', this.adventureLevel);
+
+    if (this.isAdventure){
+      this.chooseAIStrat();
+      this.opponent_type = 'ai';
+      this._player_side = this.getAdventurePlayerRole();
+      console.log('wahoo', this._player_side);
+    }
+
     if (this.opponent_type === 'ia'){
       this.chooseAIStrat();
       console.log('c est moi!');
+    }
+
+    if (this.opponent_type !== 'ia'){
+      this.isAdventure = false;
     }
 
     for(const node of this._graph?.nodes) {
@@ -139,6 +152,19 @@ export class GameService {
     this.opponentType = type;
   }
 
+  timeLeft: number = 60;
+  private interval: NodeJS.Timeout;
+
+  startTimer() {
+    this.interval = setInterval(() => {
+      if(this.timeLeft > 0) {
+        this.timeLeft--;
+      } else {
+        this.timeLeft = 60;
+      }
+    },1000)
+  }
+
   chooseAIStrat() {
     if (this._player_side === 'goat'){
       this.ai_strat = new NaiveCabbage();
@@ -153,15 +179,28 @@ export class GameService {
       if(this._player_side === 'goat'){
         if(this.goat_turn === true){
           d3.select('#details-informations')
-          .style('color', `${this.goat_color}`)
-          .text(() => "C'est au tour de la chèvre")
+            .style('color', `${this.goat_color}`)
+            .text(() => "Le collecteur de choux a fini de récolter les choux pour ce tour")
+            .append('p')
+            .style('color', `${this.goat_color}`)
+            .text(() => "C'est au tour de la chèvre")
+          d3.select('#info-jeu')
+            .style('color', `${this.goat_color}`)
+            .text(() => "JOUEUR = Chèvre")
+            .append('p')
+            .attr('id', 'ia-player')
+            .style('color', `${this.collector_color}`)
+            .text(() => "IA = Collecteur de choux");
         }
         else{ //C'est au tour de l'ia et il joue le collecteur de choux
           this.chooseAIStrat();
+          this.startTimer();
           console.log('cabbage', this.cabbage_position);
           d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
           .text(() => "Le ramasseur de choux réfléchit à son coup...")
+          .style('color', 'green')
+          .text(() => "{{timeLeft}} Seconds Left....")
           console.log("Strategy", this.ai_strat);
           let pos = this.ai_strat.action(this.graph, this.goat_position, this.cabbage_positions, this.collect_speed);
           this.collected_cabbages = pos;
@@ -174,14 +213,21 @@ export class GameService {
         if(this.goat_turn === false){
           d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
-          .text(() => "C'est au tour du ramasseur de choux")
+            .text(() => "C'est au tour du ramasseur de choux")
+            .text(() =>"Joueur = Collecteur de choux")
+          d3.select('#info-jeu')
+            .style('color', 'red')
+            .text(() => "JOUEUR = Collecteur de choux")
+            .append('p')
+            .attr('id', 'ia-player')
+            .style('color', `${this.goat_color}`)
+            .text(() => "IA = Chèvre");
         }
         else{ //C'est au tour de l'ia et il joue la chèvre
           this.chooseAIStrat();
           //let voisins = this._graph.edges(this.goat_position_index); c'etait pour voir si la fonction edges fonctionne, c'est le cas :)
           //console.log("voisin", voisins);
           //console.log('goat', this.goat_position);
-          console.log('hello_world')
           d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
           .text(() => "La chèvre réfléchit à son coup...")
@@ -204,11 +250,28 @@ export class GameService {
       if(this.goat_turn === true) {
         d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
-          .text(() => "C'est au tour de la chèvre")
+          .text(() => "Le collecteur de choux a fini de récolter les choux pour ce tour")
+          .append('p')
+          .style('color', `${this.goat_color}`)
+          .text(() => "C'est à la chèvre de jouer")
+        d3.select('#info-jeu')
+          .style('color', `${this.goat_color}`)
+          .text(() => "JOUEUR 1 = Chèvre")
+          .append('p')
+          .attr('id', 'ia-player')
+          .style('color', `${this.collector_color}`)
+          .text(() => "JOUEUR 2 = Collecteur de choux");
       } else if(!this.goat_turn) {
         d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
-          .text(() => "C'est au tour du collecteur de choux");
+          .text(() => "La chèvre vient de finir son tour, c'est au collecteur de choux de jouer")
+        d3.select('#info-jeu')
+          .style('color', `${this.goat_color}`)
+          .text(() => "JOUEUR 1 = Chèvre")
+          .append('p')
+          .attr('id', 'ia-player')
+          .style('color', `${this.collector_color}`)
+          .text(() => "JOUEUR 2 = Collecteur de choux");
         this.displayCollectCount();
       }
     }
@@ -220,6 +283,7 @@ export class GameService {
     d3.select('#collect-informations').remove();
     d3.select('#details-informations')
           .append('p')
+          .style('color', `green`)
           .attr('id', 'collect-informations')
           .text(() => `Nombre de choux restant à collecter : ${this.collect_speed - this.collected_cabbages.length}`)
   }
@@ -246,7 +310,7 @@ export class GameService {
       this.goat_token?.setState(environment.pawnOnTurn)
     }
 
-    if(this.checkEnd()) {
+    if(this.checkEnd() && !this.isAdventure) {
       const message = this.goat_win ? 'La chèvre a gagnée !' : 'Le collecteur de choux a gagné !'
       const img_url = this.goat_win ? 'assets/goat.png' : 'assets/harvest.png'
       Swal.fire({
@@ -262,9 +326,60 @@ export class GameService {
         if(result.isDenied) {
           this.router.navigate(['/configuration']);
         } else if(result.isConfirmed) {
+
           this.replayCallback();
         }
       })
+
+    }
+
+    if(this.checkEnd() && this.isAdventure) {
+      if (this.player_side === 'goat'){
+        this.message = this.goat_win ? 'La chèvre a gagnée ! Vous avez réussi le niveau !' : 'Le collecteur de choux a gagné ! Vous avez échoué...'
+        this.img_url = this.goat_win ? 'assets/goat.png' : 'assets/harvest.png'
+      }
+      else{
+        this.message = this.goat_win ?  'La chèvre a gagné ! Vous avez échoué...' : 'Le collecteur de choux a gagné ! Vous avez réussi le niveau !'
+        this.img_url = this.goat_win ? 'assets/harvest.png' : 'assets/goat.png'
+      }
+      Swal.fire({
+        title : 'Fin de partie',
+        icon: 'success',
+        text: this.message,
+        showDenyButton: true,
+        denyButtonText: 'Retour au menu',
+        confirmButtonText: 'Niveau suivant',
+        imageUrl: this.img_url,
+        imageHeight: '10em'
+      }).then((result) => {
+        if(result.isDenied) {
+          this.router.navigate(['/adventure-menu']);
+        } else if(result.isConfirmed) {
+          this.AdventureService.launchNextLevel()
+          /*
+          this.adventure.goToNextLevel();
+          console.log('indice de niveau', this.adventure.level_index);
+          this.setAdventureLevel(this.adventure.getCurrentLevel());
+          console.log('niveau_actuel', this.adventureLevel);
+          console.log('avant', this._graph);
+          this._graph = (this.GraphService.generateGraph(this.adventureLevel.getGraphType(), this.adventureLevel.getGraphParams()));
+          console.log('après', this._graph);
+          if (this.adventureLevel.getAiSide() === 'goat'){
+            this.gameService.set_player_side = 'cabbage';
+          }else{
+            this.gameService.set_player_side = 'cabbage';
+          }
+          this.setCollect_speed(this.adventureLevel.getCollectSpeed());
+          let extras = {
+            queryParams: {
+              gameMode: level.getDifficulty(),
+              adventure: true
+            }
+          }
+          this.update()
+          */
+        }
+        })
 
     }
 
@@ -277,7 +392,10 @@ export class GameService {
       const idx = this.cabbage_positions.findIndex(c =>{
         return c.index == cabbage.attr('index')
       })
-      
+      d3.select('circle')
+        .attr('id', idx)
+        .style('color', 'red')
+      console.log('le choux rouge', cabbage)
       if(idx !== -1) {
         this.cabbage_positions.splice(idx, 1)
         cabbage.remove();
@@ -299,6 +417,24 @@ export class GameService {
       icon: 'info',
       html: this.getRulesHtml()
     })
+  }
+
+  public nextLevel(){
+    this.adventure.goToNextLevel();
+    console.log('indice de niveau', this.adventure.level_index);
+    this.setAdventureLevel(this.adventure.getCurrentLevel());
+    console.log('niveau_actuel', this.adventureLevel);
+    console.log('avant', this._graph);
+    const type_graph = this.adventureLevel.getGraphType();
+    const param_graph =  this.adventureLevel.getGraphParams();
+    this._graph = GraphService.generateGraph(type_graph, param_graph)[1];
+    console.log('après', this._graph);
+    if (this.adventureLevel.getAiSide() === 'goat'){
+      this.gameService.set_player_side = 'cabbage';
+    }else{
+      this.gameService.set_player_side = 'cabbage';
+    }
+    this.setCollect_speed(this.adventureLevel.getCollectSpeed());
   }
 
   /* Getters */
@@ -341,6 +477,11 @@ export class GameService {
 
   setAdventure(adventure) {
     this.adventure = adventure;
+    this.isAdventure = true;
+  }
+
+  setAdventureLevel(level) {
+    this.adventureLevel = level;
     this.isAdventure = true;
   }
 

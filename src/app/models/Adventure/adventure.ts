@@ -63,4 +63,8 @@ export class Adventure {
     reset() {
         this.level_index = 0;
     }
+
+    getLevel_index(){
+        return this.level_index;
+    }
 }

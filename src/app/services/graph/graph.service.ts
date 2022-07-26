@@ -15,6 +15,9 @@ import { Specific } from 'src/app/models/Graph/Specific/specific';
   providedIn: 'root'
 })
 export class GraphService {
+  static generateGraph(type_graph: any, param_graph: any) {
+    throw new Error('Method not implemented.');
+  }
   [x: string]: any;
 
   private graph: Graph | undefined;
@@ -66,9 +69,24 @@ export class GraphService {
       case 'tree':
         this.graph = this.generateTree(args[0], args[1]);
         break;
-      case 'peterson':
-    }
+      case 'rope':
+        this.graph = this.oneCopsGraph(args[0]);
+        break;
+      case 'the':
+        this.graph = this.generateTheOne();
+        break;
+      case 'dodecahedron':
+      default:
+        this.graph = this.generateFromFile(type);
+        break;
+      }
     return this.graph;
+  }
+
+
+  // Generate a random number between "start" (include) and "end" (exclude)
+  private randomInRange(start, end) {
+    return Math.floor(Math.random() * (end - start) + start);
   }
 
   generatesNodes(n: number): any[] {
@@ -79,6 +97,51 @@ export class GraphService {
       });
     }
     return nodes;
+  }
+
+  private neighbors(index, links = []) {
+    const result = [];
+    for(let i = 0; i < links.length; i++) {
+      if(links[i].source === index) {
+        result.push(links[i].target);
+      } else if (links[i].target === index) {
+        result.push(links[i].source);
+      }
+    }
+    return result;
+  }
+
+  private subset(set = []) {
+    const tmp_set = [...set]
+    const subset = [];
+    const size = this.randomInRange(1, tmp_set.length);
+    for(let i = 0; i < size; i++) {
+      const index = this.randomInRange(0, tmp_set.length);
+      const element = tmp_set.splice(index, 1)[0];
+      subset.push(element);
+    }
+    return subset;
+  }
+
+  private oneCopsGraph(n): Common {
+    let nodes = this.generatesNodes(n)
+    let links = [];
+
+    for(let i=n-2; i>=0; i--) {
+      let index = this.randomInRange(i, n);
+      while(index === i) { // Check if random selected node is not the current node
+        index = this.randomInRange(i, n);
+      }
+      const neighbors = this.neighbors(index, links);
+      const neighbors_subset = this.subset(neighbors);
+      for(const neighbor of neighbors_subset) {
+        if(neighbor !== i) {
+          links.push({source: i, target: neighbor})
+        }
+      }
+      links.push({source: i, target: index});
+    }
+    return new Common(nodes, links, 'copsAlwaysWin');
   }
 
   generateGrid(width: number, height: number): Grid {
@@ -166,6 +229,79 @@ export class GraphService {
 
     return new Tree(nodes, links);
   }
+
+  generateTheOne(): Tree {
+
+    let nodes = this.generatesNodes(12);
+    let links = [];
+    links.push({
+      source: 0,
+      target: 1
+    });
+    links.push({
+      source: 1,
+      target: 2
+    });
+    links.push({
+      source: 2,
+      target: 3
+    });
+    links.push({
+      source: 2,
+      target: 4
+    });
+    links.push({
+      source: 3,
+      target: 5
+    });
+    links.push({
+      source: 4,
+      target: 6
+    });
+    links.push({
+      source: 5,
+      target: 7
+    });
+    links.push({
+      source: 5,
+      target: 8
+    });
+    links.push({
+      source: 5,
+      target: 9
+    });
+    links.push({
+      source: 5,
+      target: 10
+    });
+    links.push({
+      source: 5,
+      target: 11
+    });
+    links.push({
+      source: 6,
+      target: 7
+    });
+    links.push({
+      source: 6,
+      target: 8
+    });
+    links.push({
+      source: 6,
+      target: 9
+    });
+    links.push({
+      source: 6,
+      target: 10
+    });
+    links.push({
+      source: 6,
+      target: 11
+    });
+    return new Tree(nodes, links);
+  }
+    
+
 
 
 /*  generatePetersen(): Common{
@@ -270,7 +406,7 @@ export class GraphService {
     const blob = await this.downloadAssets('petersen');
     const file = new File([blob], 'petersen.json');
     /* console.log('FILE',file); */
-    await this.loadGraphFromFile(file);
+    return this.loadGraphFromFile(file);
     /* console.log('HERE'); */
   }
 
@@ -344,3 +480,4 @@ export class GraphService {
 
 
 }
+

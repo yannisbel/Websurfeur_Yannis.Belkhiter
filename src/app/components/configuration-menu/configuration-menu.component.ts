@@ -12,7 +12,7 @@ import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@an
 })
 export class ConfigurationMenuComponent implements OnInit {
 
-  public configurations = ['tree', 'cycle', 'grid', 'tore', 'rope', 'petersen', 'dodecahedron'];
+  public configurations = ['tree', 'cycle', 'grid', 'tore', 'rope', 'petersen', 'dodecahedron', 'the_one'];
   public selected_configuration: string = 'tree';
   public configuration_param_boundaries: { [index: string]: { param1: ParamBoundary, param2: ParamBoundary | undefined } } = {
     tree: {
@@ -32,6 +32,10 @@ export class ConfigurationMenuComponent implements OnInit {
       param2: { min: 1, max: 25 }
     },
     peterson: {
+      param1: { min: -1, max: 10 },
+      param2: undefined
+    },
+    the_one: {
       param1: { min: -1, max: 10 },
       param2: undefined
     },
@@ -188,8 +192,8 @@ export class ConfigurationMenuComponent implements OnInit {
         return 'Grille';
       case 'tore':
         return 'Grille torique';
-      case 'petersen':
-        return 'Petersen';
+      case 'the_one':
+        return 'Un arbre différent';
       case 'rope':
         return 'Graphes Cordaux';
       case 'dodecahedron':
@@ -399,6 +403,7 @@ export class ConfigurationMenuComponent implements OnInit {
     this.gameService.board_params = params;
     this.gameService.graph = this.graphService.generateGraph(this.selected_configuration, params);
     this.gameService.collect_speed = this.collect_speed;
+    
     this.router.navigate(['/board'])
   }
 

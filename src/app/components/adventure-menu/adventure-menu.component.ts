@@ -6,12 +6,14 @@ import { AdventureService } from 'src/app/services/Adventure/adventure.service';
 import { GameService } from 'src/app/services/game/game.service';
 import { GraphService } from 'src/app/services/graph/graph.service';
 
+
 @Component({
   selector: 'app-adventure-menu',
   templateUrl: './adventure-menu.component.html',
   styleUrls: ['./adventure-menu.component.scss']
 })
 export class AdventureMenuComponent implements OnInit {
+  [x: string]: any;
 
   public adventures = this.adventureService.getAvailableAdventures();
   public selected_adventure: Adventure = null;
@@ -38,5 +40,9 @@ export class AdventureMenuComponent implements OnInit {
   goBack() {
     this.router.navigate(['/game-mode-selection'])
   }
+
+  public niveaux = ['intro', 'monotone', 'cout', 'strat']
+
+
 
 }
