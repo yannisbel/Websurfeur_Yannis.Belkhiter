@@ -65,10 +65,11 @@ export class GraphConstructorComponent implements OnInit {
     this.graphConstructorService.toolAction(this.selected_tool, position)
     this.circleLayer.append('circle')
       .attr('r', 20)
-      .attr('class', 'circle')
+      .attr('class', position.index)
       .style('fill', this.graphConstructorService.originalNodeColor)
       .attr('cx', position.x)
       .attr('cy', position.y)
+      .attr('id', position.index)
       .style('z-index', 1)
       .call(
         d3.drag()

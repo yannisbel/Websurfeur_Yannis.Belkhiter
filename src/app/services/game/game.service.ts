@@ -200,12 +200,29 @@ export class GameService {
           d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
           .text(() => "Le ramasseur de choux réfléchit à son coup...")
-          .style('color', 'green')
-          .text(() => "{{timeLeft}} Seconds Left....")
           console.log("Strategy", this.ai_strat);
           let pos = this.ai_strat.action(this.graph, this.goat_position, this.cabbage_positions, this.collect_speed);
           this.collected_cabbages = pos;
           console.log('choux à retirer', this.collected_cabbages);
+          if (this.trou !== []){
+            for(const t of this.trou){
+              d3.select('circle#cabbage'+t.attr('index')).remove()
+            }
+            this.trou = [];
+          }
+          for(const cabbage of this.collected_cabbages) {
+            const idx = this.cabbage_positions.findIndex(c =>{
+              return c.index == cabbage.attr('index')
+            })
+            this.trou.push(cabbage);
+            this.svg.append('circle')
+              .attr('index', cabbage.attr('index'))
+              .attr('fill', 'navy')
+              .attr('r', 20)
+              .attr('cx', cabbage.attr('cx'))
+              .attr('cy', cabbage.attr('cy'))
+              .attr('id', `cabbage${cabbage.attr('index')}`)
+          }
           this.collectCabbages();
           this.validateTurn();
         }
@@ -403,11 +420,12 @@ export class GameService {
       this.trou.push(cabbage);
       this.svg.append('circle')
         .attr('index', cabbage.attr('index'))
-        .attr('fill', 'red')
+        .attr('fill', 'navy')
         .attr('r', 20)
         .attr('cx', cabbage.attr('cx'))
         .attr('cy', cabbage.attr('cy'))
         .attr('id', `cabbage${cabbage.attr('index')}`)
+      //this.select('circle#goat-pawn.goat').raise()
       if(idx !== -1) {
         console.log('hey', cabbage.attr('index'))
         this.cabbage_positions.splice(idx, 1)
