@@ -20,6 +20,7 @@ import { AdventureService } from '../Adventure/adventure.service';
 export class GameService {
   [x: string]: any;
 
+  private trou = [];
   private _board_configuration: string | undefined;
   private _board_params: number[] = [];
   private _opponent_type: string | undefined;
@@ -388,15 +389,27 @@ export class GameService {
   }
 
   private collectCabbages() {
+    console.log('trou', this.trou)
+    if (this.trou !== []){
+      for(const t of this.trou){
+        d3.select('circle#cabbage'+t.attr('index')).remove()
+      }
+      this.trou = [];
+    }
     for(const cabbage of this.collected_cabbages) {
       const idx = this.cabbage_positions.findIndex(c =>{
         return c.index == cabbage.attr('index')
       })
-      d3.select('circle')
-        .attr('id', idx)
-        .style('color', 'red')
-      console.log('le choux rouge', cabbage)
+      this.trou.push(cabbage);
+      this.svg.append('circle')
+        .attr('index', cabbage.attr('index'))
+        .attr('fill', 'red')
+        .attr('r', 20)
+        .attr('cx', cabbage.attr('cx'))
+        .attr('cy', cabbage.attr('cy'))
+        .attr('id', `cabbage${cabbage.attr('index')}`)
       if(idx !== -1) {
+        console.log('hey', cabbage.attr('index'))
         this.cabbage_positions.splice(idx, 1)
         cabbage.remove();
       }
