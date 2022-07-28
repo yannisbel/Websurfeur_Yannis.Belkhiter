@@ -20,7 +20,10 @@ import { AdventureService } from '../Adventure/adventure.service';
 export class GameService {
   [x: string]: any;
 
+  private one_shoot = 0;
   private trou = [];
+  private previous_trou = [];
+  private previous_position: {index: number, x: number, y: number} = {index: 0, x: -1, y: -1 };
   private _board_configuration: string | undefined;
   private _board_params: number[] = [];
   private _opponent_type: string | undefined;
@@ -38,6 +41,7 @@ export class GameService {
   private goat_token: Pawn | undefined;
 
   private goat_position: {index: number, x: number, y: number} = {index: 0, x: -1, y: -1 };
+  private previous_goat_position = this.goat_position;
   private cabbage_positions: {index: number, x: number, y: number}[] = [];
   private collected_cabbages: any[] = [];
   private cabbage_position_index: number[] = [];
@@ -107,6 +111,7 @@ export class GameService {
     console.log('cabbage', this.cabbage_positions);
     console.log('index', start_point.index);
 
+    this.previous_position = start_point;
     this.goat_position = start_point;
     this.goat_token = new Pawn('goat', start_point, this.graph, this);
     this.goat_turn = false;
@@ -124,7 +129,7 @@ export class GameService {
         .text(() => "Ce n'est pas au tour du collecteur de choux")
       return;
     }
-    
+    console.log('c la cible', target)
     const selected_target = d3.select(target as any)
     if(this.collected_cabbages.find(t => t.attr('id') === selected_target.attr('id'))) {
       d3.select('#collect-limit').remove();
@@ -181,7 +186,7 @@ export class GameService {
         if(this.goat_turn === true){
           d3.select('#details-informations')
             .style('color', `${this.goat_color}`)
-            .text(() => "Le collecteur de choux a fini de récolter les choux pour ce tour")
+            .text(() => "Le collecteur de choux a fini de récolter les choux pour ce tour (sommets bleu foncés)")
             .append('p')
             .style('color', `${this.goat_color}`)
             .text(() => "C'est au tour de la chèvre")
@@ -195,7 +200,7 @@ export class GameService {
         }
         else{ //C'est au tour de l'ia et il joue le collecteur de choux
           this.chooseAIStrat();
-          this.startTimer();
+          console.log('trou précédent', this.trou);
           console.log('cabbage', this.cabbage_position);
           d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
@@ -204,37 +209,20 @@ export class GameService {
           let pos = this.ai_strat.action(this.graph, this.goat_position, this.cabbage_positions, this.collect_speed);
           this.collected_cabbages = pos;
           console.log('choux à retirer', this.collected_cabbages);
-          if (this.trou !== []){
-            for(const t of this.trou){
-              d3.select('circle#cabbage'+t.attr('index')).remove()
-            }
-            this.trou = [];
-          }
-          for(const cabbage of this.collected_cabbages) {
-            const idx = this.cabbage_positions.findIndex(c =>{
-              return c.index == cabbage.attr('index')
-            })
-            this.trou.push(cabbage);
-            this.svg.append('circle')
-              .attr('index', cabbage.attr('index'))
-              .attr('fill', 'navy')
-              .attr('r', 20)
-              .attr('cx', cabbage.attr('cx'))
-              .attr('cy', cabbage.attr('cy'))
-              .attr('id', `cabbage${cabbage.attr('index')}`)
-          }
-          this.collectCabbages();
           this.validateTurn();
         }
       }
       else{
         if(this.goat_turn === false){
+          this.previous_position = this.goat_position;
           d3.select('#details-informations')
-          .style('color', `${this.collector_color}`)
+            .style('color', `${this.collector_color}`)
+            .text(() => "La chèvre a finit son tour. Elle s'est déplacé sur un nouveau sommet.")
+            .append('p')
+            .style('color', `${this.collector_color}`)
             .text(() => "C'est au tour du ramasseur de choux")
-            .text(() =>"Joueur = Collecteur de choux")
           d3.select('#info-jeu')
-            .style('color', 'red')
+            .style('color', `${this.collector_color}`)
             .text(() => "JOUEUR = Collecteur de choux")
             .append('p')
             .attr('id', 'ia-player')
@@ -243,32 +231,21 @@ export class GameService {
         }
         else{ //C'est au tour de l'ia et il joue la chèvre
           this.chooseAIStrat();
-          //let voisins = this._graph.edges(this.goat_position_index); c'etait pour voir si la fonction edges fonctionne, c'est le cas :)
-          //console.log("voisin", voisins);
-          //console.log('goat', this.goat_position);
           d3.select('#details-informations')
-          .style('color', `${this.goat_color}`)
-          .text(() => "La chèvre réfléchit à son coup...")
-          //console.log("Strategy", this.ai_strat);
-          //console.log("position_goat", this.goat_position);
+            .style('color', `${this.goat_color}`)
+            .text(() => "La chèvre réfléchit à son coup...")
           let pos = this.ai_strat.action(this.graph, this.goat_position, this.cabbage_positions, this.collect_speed);
-          //console.log('solution retenue', pos);
-          //console.log('liste choux', this.cabbage_positions);
           this.goat_position = pos;
           this.goat_position_index = pos.index;
           this.goat_token?.updatePosition(pos);
           this.validateTurn();
-          //console.log('Nouvelle position du mec', this.goat_token?.getPosition());
-          //console.log('this.id', d3.select('#this.id'));
-          //console.log('pion_chèvre', this.goat_token);
-          //this.goat_token = new Pawn('goat', this.goat_token?.getPosition(), this.graph, this)
         }
       }
     }  else {
       if(this.goat_turn === true) {
         d3.select('#details-informations')
           .style('color', `${this.goat_color}`)
-          .text(() => "Le collecteur de choux a fini de récolter les choux pour ce tour")
+          .text(() => "Le collecteur de choux a fini de récolter les choux pour ce tour (sommets bleu foncé)")
           .append('p')
           .style('color', `${this.goat_color}`)
           .text(() => "C'est à la chèvre de jouer")
@@ -280,6 +257,7 @@ export class GameService {
           .style('color', `${this.collector_color}`)
           .text(() => "JOUEUR 2 = Collecteur de choux");
       } else if(!this.goat_turn) {
+        console.log('trou précédent', this.trou);
         d3.select('#details-informations')
           .style('color', `${this.collector_color}`)
           .text(() => "La chèvre vient de finir son tour, c'est au collecteur de choux de jouer")
@@ -311,15 +289,113 @@ export class GameService {
   }
 
   private updateGoatPosition(new_goat_position: {index: number, x: number, y: number}) {
-    this.goat_position = {...new_goat_position}
+    this.previous_position = this.goat_position;
+    console.log('position précédente', this.previous_position);
+    if (this.one_shoot === 1){
+      this.one_shoot = 0;
+    }
+      this.goat_position = {...new_goat_position}
     const idx = this.cabbage_positions.findIndex(n => n.index === new_goat_position.index)
     if(idx !== -1) {
       this.goat_win = true;
     }
   }
 
+
+  previous_goat(){
+    console.log('ancienne position de la chèvre', this.previous_goat_position)
+    console.log('actuelle', this.goat_position)
+    this.goat_position = this.previous_goat_position;
+    this.goat_position_index = this.previous_goat_position.index;
+    this.goat_token?.updatePosition(this.previous_goat_position);
+    this.updateGoatPosition(this.previous_goat_position);
+    this.goat_token?.setState(environment.pawnWaitingTurn);
+  }
+
+
+  previous_cabbage(){
+    //On remet en bleu foncé les sommets pris du tour précédent
+      console.log('anciennes positions des choux', this.trou)
+      for (const c of this.trou){
+        let x = c.attr('cx');
+        let y = c.attr('cy');
+        let index = c.attr('index');
+        let cabb = this._graph.nodes[index];
+        console.log('index number', index)
+        this.svg.append('circle')
+        .attr('fill', 'url(#cabbage)')
+        .attr('r', 30)
+        .attr('cx', x)
+        .attr('cy', y)
+        .attr('index', index)
+        .attr('id', `cabbage${parseInt(index)}`)
+        .on('click', (event: Event) => {
+        this.handleClickOnCabbage(event.target!)
+        })
+        this.cabbage_positions.push(cabb);
+        console.log('liste des choux', this.cabbage_positions)
+        this.trou = [];
+
+      }
+        /* for(const t of this.trou){
+        console.log('indice', t.attr('index'))
+        const num = t.attr('index')
+        var  cercle = d3.selectAll('circle')
+          .filter(function() {
+            return d3.select(this).attr("index") == num; // filter by single attribute
+          })
+        this.svg.append('circle')
+          .attr('fill', 'url(#cabbage)')
+          .attr('r', 30)
+          .attr('cx', cercle.attr('cx'))
+          .attr('cy', cercle.attr('cy'))
+          .attr('index', num)
+          .attr('id', `cabbage${num}`)
+
+        let cabbage_toadd = this.cabbage_positions[0]
+        cabbage_toadd.index = parseInt(t.attr("index"));
+        cabbage_toadd.x = parseFloat(t.attr("cx"));
+        cabbage_toadd.y = parseFloat(t.attr("cy"))
+        this.cabbage_positions.push(cabbage_toadd)
+      } */
+  }
+
+
+
+  previousTurn() {
+    if (this.opponent_type === 'ai'){
+      console.log("ai = collecteur, position chèvre : ", this.goat_position, this.previous_goat_position)
+      if (this._player_side === 'goat'){
+        this.previous_goat()
+        this.previous_cabbage()
+        this.goat_turn = true;
+        this.goat_token?.setState(environment.pawnOnTurn);
+        this.update();
+      } else{
+        this.previous_goat()
+        this.previous_cabbage()
+        this.goat_turn = false;
+      }
+    } else {
+      if (this.goat_turn){
+        this.previous_cabbage()
+        this.goat_turn = false
+        this.update();
+        this.validateTurn();
+      } else {
+        this.previous_goat()
+        this.goat_turn = true
+        this.update();
+        this.validateTurn();
+      }
+    this.update();
+    this.validateTurn();
+    }
+ }
+
   validateTurn() {
     if(this.goat_turn === true) {
+      this.previous_goat_position = this.previous_position;
       this.updateGoatPosition(this.goat_token?.getPosition() as any);
       this.goat_token?.setState(environment.pawnWaitingTurn);
     } else {
@@ -409,23 +485,34 @@ export class GameService {
     console.log('trou', this.trou)
     if (this.trou !== []){
       for(const t of this.trou){
-        d3.select('circle#cabbage'+t.attr('index')).remove()
+        const num = t.attr('index')
+        this.svg.selectAll('circle')
+          .filter(function() {
+            return d3.select(this).attr("index") == num; // filter by single attribute
+          })
+          .transition().duration(1000)
+          .attr('r', 20)
+          .attr('fill', 'rgb(69, 133, 195)')
+          .style('fill', 'rgb(69, 133, 195)')
       }
+      this.previous_trou = this.trou
       this.trou = [];
     }
     for(const cabbage of this.collected_cabbages) {
+      console.log("liste des choux 2", this.cabbage_positions)
       const idx = this.cabbage_positions.findIndex(c =>{
         return c.index == cabbage.attr('index')
       })
       this.trou.push(cabbage);
-      this.svg.append('circle')
-        .attr('index', cabbage.attr('index'))
-        .attr('fill', 'navy')
+      const num = cabbage.attr('index')
+      this.svg.selectAll('circle')
+        .filter(function() {
+          return d3.select(this).attr("index") == num; // filter by single attribute
+        })
+        .transition().duration(1000)
         .attr('r', 20)
-        .attr('cx', cabbage.attr('cx'))
-        .attr('cy', cabbage.attr('cy'))
-        .attr('id', `cabbage${cabbage.attr('index')}`)
-      //this.select('circle#goat-pawn.goat').raise()
+        .attr('fill', 'navy')
+        .style('fill', 'navy')
       if(idx !== -1) {
         console.log('hey', cabbage.attr('index'))
         this.cabbage_positions.splice(idx, 1)
@@ -433,6 +520,7 @@ export class GameService {
       }
     }
     this.collected_cabbages = []
+    console.log("liste des choux 2", this.cabbage_positions)
   }
 
 

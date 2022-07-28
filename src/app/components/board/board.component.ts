@@ -64,4 +64,8 @@ export class BoardComponent implements OnInit {
     this.gameService.validateTurn()
   }
 
+  previousTurn() {
+    this.gameService.previousTurn()
+  }
+
 }

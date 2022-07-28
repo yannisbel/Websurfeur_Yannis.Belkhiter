@@ -77,10 +77,9 @@ export class Pawn {
         this.y = node.y
         d3.select('#' + this.id)
                   .transition()
-                  .duration(2000)
+                  .duration(4000)
                   .attr("cx", this.x)
                   .attr("cy", this.y)
-                  .lower();
       }
 
 }
