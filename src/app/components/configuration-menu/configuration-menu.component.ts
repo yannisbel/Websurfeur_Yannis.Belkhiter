@@ -3,6 +3,7 @@ import { GameService } from 'src/app/services/game/game.service';
 import { GraphService } from 'src/app/services/graph/graph.service';
 import { NavigationExtras, Router } from '@angular/router';
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -316,6 +317,32 @@ export class ConfigurationMenuComponent implements OnInit {
       default:
         return 'Unknown but usefeul (I think)'
     }
+  }
+
+  displayHack(){
+    this.gameService.role_goat = 'hacker';
+    this.gameService.role_cabbage = 'page';
+    this.gameService.changeColorHack();
+    Swal.fire({
+      icon: 'info',
+      title: 'Mode WebSurfer activé',
+      imageUrl: 'assets/hacker.png',
+      imageHeight: '10em',
+      text: 'Vous jouer maintenant avec un hacker et un navigateur web',
+    })
+  }
+
+  displayGoat(){
+    this.gameService.role_goat = 'goat';
+    this.gameService.role_cabbage = 'cabbage';
+    this.gameService.changeColorGoat();
+    Swal.fire({
+      icon: 'info',
+      title: 'Mode Ludique activé',
+      imageUrl: 'assets/harvest.png',
+      imageHeight: '10em',
+      text: 'Vous jouer maintenant avec une chèvre et un collecteur de choux',
+    })
   }
 
   public update_action = {
