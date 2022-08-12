@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Swal from 'sweetalert2';
+import { saveAs } from 'file-saver';
 import * as fileSaver from 'file-saver';
 
 @Injectable({
@@ -36,11 +37,6 @@ export class GraphConstructorService {
         showCancelButton: true,
         input: 'text',
         inputLabel: 'Nom du  fichier',
-        inputValidator: (value) => {
-          if (!value) {
-            return 'You need to write something!'
-          }
-        }
       }).then((result) => {
         if (result.isConfirmed) {
           resolve(result.value)
@@ -74,6 +70,7 @@ export class GraphConstructorService {
       }
       return this.save(result.value, args);
     }
+    return false;
   }
 
   private async selectGridProperties(): Promise<number[]> {

@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./game-mode-menu.component.scss']
 })
 export class GameModeMenuComponent implements OnInit {
+  [x: string]: any;
 
   constructor(private gameService: GameService, private router: Router) { }
 
@@ -22,6 +23,7 @@ export class GameModeMenuComponent implements OnInit {
   jeuLibre() {
     this.router.navigate(['/configuration']),
     this.displayRules()
+    this.configurationComponent.selected_configuration = "tree";
   }
 
 }

@@ -15,7 +15,7 @@
     <div class="menu">
         <div class="board-conf card">
             <div class="board-options">
-                <h3>Choisissez un plateau</h3>
+                <h2>Choisissez un plateau</h2>
 
                 <div class="options">
 
@@ -24,7 +24,7 @@
                         <img src="assets/{{conf}}.svg">
                         {{getConfigurationName(conf)}}
                     </div>
-                                
+
                 <div class="option card" [class]="isSelectedGraphType('import')">
                     <div class="item-import file-label">
                         <input (click)="selectGraphType('import')" id="graph-file-input" name="graph-file-input" class="input-file" type="file"
@@ -111,7 +111,18 @@
                 </div>
             </div>
 
-            <div class="level card">
+            <div class="collect card">
+                <h3>Choisissez le nombre de pas par tour</h3>
+                <div class="input-field">
+                    <label for="speed">Nombre de pas par tour : </label>
+                    <input min="1" type="number" name="path_speed"
+                        min="1"
+                        [(ngModel)]="path_speed"
+                        (blur)="checkValueRightness($event)">
+                </div>
+            </div>
+
+            <div *ngIf="isOnePlayerGame()" class="level card">
                 <h3>Choisissez le niveau de difficulté</h3>
                 <div class="level-selection-list">
                     <div class="level-selection-list-item" [class]="isSelectedLevel('easy')">

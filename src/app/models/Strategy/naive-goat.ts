@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { Graph } from 'src/app/models/Graph/graph';
 import { GraphService } from 'src/app/services/graph/graph.service';
 import { GameService } from 'src/app/services/game/game.service';
-import { link } from 'fs';
 
 
 export class RandomGoat implements IStrategy {

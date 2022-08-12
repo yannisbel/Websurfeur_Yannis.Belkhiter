@@ -211,6 +211,8 @@ export abstract class Graph {
         return edges[this.getRandomInt(edges.length)];
     }
 
+
+    /*
     distance(n1: Node, n2: Node) {
         if(n2.index === undefined) { // DO NOT CHANGE TO if(!n2.index) because index use number
             n2 = {index: +n2}
@@ -248,6 +250,8 @@ export abstract class Graph {
         }
         return -1;
     }
+
+    */
 
     /* ---------- PROPERTIES ---------- */
 

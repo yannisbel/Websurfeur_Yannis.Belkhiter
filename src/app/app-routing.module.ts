@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { AdventureMenuComponent } from './components/adventure-menu/adventure-menu.component';
 import { BoardComponent } from './components/board/board.component';
 import { ConfigurationMenuComponent } from './components/configuration-menu/configuration-menu.component';
@@ -20,7 +20,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
+  imports: [RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules, useHash: true})],
   exports: [RouterModule]
 })
 export class AppRoutingModule {

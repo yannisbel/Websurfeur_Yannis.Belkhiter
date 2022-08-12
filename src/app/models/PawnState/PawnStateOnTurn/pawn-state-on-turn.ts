@@ -11,7 +11,11 @@ export class PawnStateOnTurn implements PawnState {
 
         for(const node of (d.graph as Graph).nodes) {
             if(node.x === d.last_position.x && node.y === d.last_position.y) {
-                this.edges = (d.graph as Graph).edges({index: node.index})
+                this.edges = (d.graph as Graph).edges({
+                    index: node.index,
+                    x: 0,
+                    y: 0
+                })
                 break;
             }
         }

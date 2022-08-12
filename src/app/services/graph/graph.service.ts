@@ -72,12 +72,20 @@ export class GraphService {
       case 'rope':
         this.graph = this.oneCopsGraph(args[0]);
         break;
-      case 'the':
-        this.graph = this.generateTheOne();
+      case 'petersen':
+        this._graph = undefined
+        this._graph = this.generateFromFile(type);
         break;
       case 'dodecahedron':
+        this._graph = undefined
+        this._graph = this.generateFromFile(type);
+        break;
+      case 'classic':
+        this._graph = undefined
+        this._graph = this.generateFromFile(type);
+        break;
       default:
-        this.graph = this.generateFromFile(type);
+        this._graph = this.generateFromFile(type);
         break;
       }
     return this.graph;
@@ -300,6 +308,13 @@ export class GraphService {
     });
     return new Tree(nodes, links);
   }
+
+  
+  public async getClassicFile(){
+    const blob = await this.downloadAssets('classic');
+    const file = new File([blob], `classic.json`);
+    return file
+  }
     
 
 
@@ -402,11 +417,20 @@ export class GraphService {
     return new Cycle(nodes, links);
   }
 
-  private async generatePetersen() {
+   async generatePetersen() {
     const blob = await this.downloadAssets('petersen');
     const file = new File([blob], 'petersen.json');
     /* console.log('FILE',file); */
-    return this.loadGraphFromFile(file);
+    await this.loadGraphFromFile(file);
+    /* console.log('HERE'); */
+  }
+
+  
+   async generateClassic() {
+    const blob = await this.downloadAssets('classic');
+    const file = new File([blob], 'classic.json');
+    /* console.log('FILE',file); */
+    await this.loadGraphFromFile(file);
     /* console.log('HERE'); */
   }
 
@@ -477,7 +501,6 @@ export class GraphService {
         break;
     }
   }
-
 
 }
 

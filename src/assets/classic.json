@@ -1,0 +1,131 @@
+{
+  "typology": "specific",
+  "nodes": [
+    {
+      "x": 169,
+      "y": 210,
+      "index": 0
+    },
+    {
+      "x": 291,
+      "y": 212,
+      "index": 1
+    },
+    {
+      "x": 407,
+      "y": 215,
+      "index": 2
+    },
+    {
+      "x": 517,
+      "y": 147,
+      "index": 3
+    },
+    {
+      "x": 509,
+      "y": 296,
+      "index": 4
+    },
+    {
+      "x": 650,
+      "y": 142,
+      "index": 5
+    },
+    {
+      "x": 647,
+      "y": 305,
+      "index": 6
+    },
+    {
+      "x": 774,
+      "y": 76,
+      "index": 7
+    },
+    {
+      "x": 774,
+      "y": 147,
+      "index": 8
+    },
+    {
+      "x": 774,
+      "y": 232,
+      "index": 9
+    },
+    {
+      "x": 774,
+      "y": 305,
+      "index": 10
+    },
+    {
+      "x": 774,
+      "y": 394,
+      "index": 11
+    }
+  ],
+  "links": [
+    {
+      "source": 0,
+      "target": 1
+    },
+    {
+      "source": 1,
+      "target": 2
+    },
+    {
+      "source": 2,
+      "target": 3
+    },
+    {
+      "source": 3,
+      "target": 5
+    },
+    {
+      "source": 5,
+      "target": 7
+    },
+    {
+      "source": 5,
+      "target": 8
+    },
+    {
+      "source": 5,
+      "target": 9
+    },
+    {
+      "source": 10,
+      "target": 5
+    },
+    {
+      "source": 5,
+      "target": 11
+    },
+    {
+      "source": 2,
+      "target": 4
+    },
+    {
+      "source": 4,
+      "target": 6
+    },
+    {
+      "source": 6,
+      "target": 7
+    },
+    {
+      "source": 6,
+      "target": 8
+    },
+    {
+      "source": 6,
+      "target": 9
+    },
+    {
+      "source": 6,
+      "target": 10
+    },
+    {
+      "source": 6,
+      "target": 11
+    }
+  ]
+}

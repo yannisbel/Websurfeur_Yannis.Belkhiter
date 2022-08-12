@@ -128,5 +128,8 @@
       }
     }
   },
-  "defaultProject": "WebSurfeur"
+  "defaultProject": "WebSurfeur",
+  "cli": {
+    "analytics": "fbfc0412-bed6-44d1-aff0-4799b33c05b8"
+  }
 }

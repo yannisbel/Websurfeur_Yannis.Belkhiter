@@ -34,10 +34,12 @@ export class Adventure {
         console.log('current level index: ' + this.level_index)
         if(this.level_index < this.levels.length - 1) {
             this.level_index++;
+            console.log('update level index: ' + this.level_index)
+            return '';
         } else {
             return await this.displayEndMessage();
         }
-        console.log('update level index: ' + this.level_index)
+
     }
 
     private async displayEndMessage() {

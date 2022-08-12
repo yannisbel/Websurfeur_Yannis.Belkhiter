@@ -4,6 +4,7 @@ import { GraphService } from 'src/app/services/graph/graph.service';
 import { NavigationExtras, Router } from '@angular/router';
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import Swal from 'sweetalert2';
+import { Specific } from 'src/app/models/Graph/Specific/specific';
 
 
 @Component({
@@ -13,8 +14,9 @@ import Swal from 'sweetalert2';
 })
 export class ConfigurationMenuComponent implements OnInit {
 
-  public configurations = ['tree', 'cycle', 'grid', 'tore', 'rope', 'petersen', 'dodecahedron', 'the_one'];
+  public configurations = ['tree', 'cycle', 'grid', 'tore', 'rope'];
   public selected_configuration: string = 'tree';
+  public importations = ['classic', 'dodecahedron', 'petersen'];
   public configuration_param_boundaries: { [index: string]: { param1: ParamBoundary, param2: ParamBoundary | undefined } } = {
     tree: {
       param1: { min: 2, max: 25 },
@@ -33,11 +35,11 @@ export class ConfigurationMenuComponent implements OnInit {
       param2: { min: 1, max: 25 }
     },
     peterson: {
-      param1: { min: -1, max: 10 },
+      param1: { min: -1, max: -1 },
       param2: undefined
     },
-    the_one: {
-      param1: { min: -1, max: 10 },
+    classic: {
+      param1: { min: -1, max: -1 },
       param2: undefined
     },
     rope: {
@@ -65,6 +67,7 @@ export class ConfigurationMenuComponent implements OnInit {
   private player_side = 'goat';
 
   public collect_speed = 1;
+  public path_speed = 1;
 
   public selected_level = 'easy';
 
@@ -87,37 +90,37 @@ export class ConfigurationMenuComponent implements OnInit {
       this.selected_configuration = localStorage.getItem('graphType');
     }
     if(localStorage.getItem('graphParam1')) {
-      this.config['graphParam1'] = +localStorage.getItem('graphParam1')
+      this.gameService.config['graphParam1'] = +localStorage.getItem('graphParam1')
     }
     if(localStorage.getItem('graphParam2')) {
-      this.config['graphParam2'] = +localStorage.getItem('graphParam2')
+      this.gameService.config['graphParam2'] = +localStorage.getItem('graphParam2')
     }
     if(localStorage.getItem('opponentType')) {
-      this.selectedOpponentType = localStorage.getItem('opponentType')
+      this.gameService.selectedOpponentType = localStorage.getItem('opponentType')
     }
     if(localStorage.getItem('selectedAi')) {
-      this.selectedAi = localStorage.getItem('selectedAi')
+      this.gameService.selectedAi = localStorage.getItem('selectedAi')
     }
     if(localStorage.getItem('gameMode')) {
-      this.gameModeSelected = localStorage.getItem('gameMode')
+      this.gameService.gameModeSelected = localStorage.getItem('gameMode')
     }
     if(localStorage.getItem('speed')) {
-      this.config['collectSpeed'] = +localStorage.getItem('speed')
+      this.gameService.config['collectSpeed'] = +localStorage.getItem('speed')
     }
     if(localStorage.getItem('copsNum')) {
-      this.config['copsNumber'] = +localStorage.getItem('copsNum')
+      this.gameService.config['copsNumber'] = +localStorage.getItem('copsNum')
     }
   }
 
   private setDataToLocalStorage() {
     localStorage.setItem('graphType', this.selected_configuration)
-    localStorage.setItem('graphParam1', `${this.config['graphParam1']}`)
-    localStorage.setItem('graphParam2', `${this.config['graphParam2']}`)
+    localStorage.setItem('graphParam1', `${this.gameService.config['graphParam1']}`)
+    localStorage.setItem('graphParam2', `${this.gameService.config['graphParam2']}`)
     localStorage.setItem('opponentType', this.selected_opponent_type)
-    localStorage.setItem('selectedAi', this.selectedAi)
-    localStorage.setItem('gameMode', this.gameModeSelected)
-    localStorage.setItem('speed', `${this.config['thiefSpeed']}`)
-    localStorage.setItem('copsNum', `${this.config['copsNumber']}`)
+    localStorage.setItem('selectedAi', this.gameService.selectedAi)
+    localStorage.setItem('gameMode', this.gameService.gameModeSelected)
+    localStorage.setItem('speed', `${this.gameService.config['thiefSpeed']}`)
+    localStorage.setItem('copsNum', `${this.gameService.config['copsNumber']}`)
   }
 
   ngAfterContentChecked() {
@@ -125,43 +128,41 @@ export class ConfigurationMenuComponent implements OnInit {
   }
 
   updateGraphParams() {
-    this.config['graphParam1'] = this.paramsBoundaries[this.selectedGraphType].param1;
-    this.config['graphParam2'] = this.paramsBoundaries[this.selectedGraphType].param2;
+    this.gameService.config['graphParam1'] = this.gameService.paramsBoundaries[this.gameService.selectedGraphType].param1;
+    this.gameService.config['graphParam2'] = this.gameService.paramsBoundaries[this.gameService.selectedGraphType].param2;
   }
 
   updateParamsName() {
     switch (this.selected_configuration) {
       case 'grid':
-        this.paramsNames = ['Largeur :', 'Longueur :'];
+        this.gameService.paramsNames = ['Largeur :', 'Longueur :'];
         break;
       case 'tore':
-        this.paramsNames = ['Largeur :', 'Longueur :'];
+        this.gameService.paramsNames = ['Largeur :', 'Longueur :'];
         break;
       case 'cycle':
-        this.paramsNames = ['Nombre de noeuds :']
+        this.gameService.paramsNames = ['Nombre de noeuds :']
         break;
       case 'tree':
-        this.paramsNames = ['Nombre de noeuds :', 'Arité de l\'arbre :']
+        this.gameService.paramsNames = ['Nombre de noeuds :', 'Arité de l\'arbre :']
         break;
       case 'copsAlwaysWin':
-        this.paramsNames = ['Nombre de noeuds :']
+        this.gameService.paramsNames = ['Nombre de noeuds :']
         break;
       case 'random':
-        this.paramsNames = []
+        this.gameService.paramsNames = []
         break;
       default:
-        this.paramsNames = []
+        this.gameService.paramsNames = []
         break;
     }
   }
 
-  ngAfterContentChecked() {
-    this.cdr.detectChanges()
-  }
-
 
   private initParams(): void {
-    this.param1 = this.configuration_param_boundaries[this.selected_configuration].param1.min;
+    if (this.configuration_param_boundaries[this.selected_configuration].param1 !== undefined) {
+      this.param1 = this.configuration_param_boundaries[this.selected_configuration].param1!.min;
+    } else { this.param1 = -1 }
     if (this.configuration_param_boundaries[this.selected_configuration].param2 !== undefined) {
       this.param2 = this.configuration_param_boundaries[this.selected_configuration].param2!.min;
     } else { this.param2 = -1 }
@@ -199,6 +200,10 @@ export class ConfigurationMenuComponent implements OnInit {
         return 'Graphes Cordaux';
       case 'dodecahedron':
         return 'Dodécahédron';
+      case 'petersen':
+        return 'Petersen';
+      case 'classic':
+        return 'Classique';  
       default:
         return 'Configuration inconnue';
       case 'import':
@@ -218,8 +223,8 @@ export class ConfigurationMenuComponent implements OnInit {
   selectImportation(configuration: string) {
     if(!configuration.includes('import')) {
       this.selected_configuration = configuration;
-      this.graphImportation = true;
-      this.graphGeneration = false;
+      this.graphImportation = false;
+      this.graphGeneration = true;
     }
     this.initParams();
   }
@@ -234,16 +239,17 @@ export class ConfigurationMenuComponent implements OnInit {
     return typology === this.selected_configuration ? 'selected' : ''
   }
 
-  selectGraphType(type: string) {
+  async selectGraphType(type: string) {
     this.selected_configuration = type;
-    if(type !== 'import') {
+    if(type !== 'import' && type !== 'dodecahedron' && type !== 'petersen' && type !== 'classic') {
       this.graphImportation = false;
       this.graphGeneration = true;
+      this.updateGraphParams();
     }
     this.updateParamsName();
-    this.updateGraphParams();
   }
   
+
   onFileChange(file : File) {
     if (file) {
       this.inputGraphJSONFile = file;
@@ -422,14 +428,17 @@ export class ConfigurationMenuComponent implements OnInit {
 
   /* Start game function */
 
-  startGame() {
+    async startGame() {
     this.gameService.board_conf = this.selected_configuration;
     this.gameService.opponent_type = this.selected_opponent_type;
     this.gameService.player_side = this.player_side;
     const params = [this.param1, this.param2]
     this.gameService.board_params = params;
-    this.gameService.graph = this.graphService.generateGraph(this.selected_configuration, params);
+    this.gameService.graph = this.graphService.generateGraph(this.selected_configuration, params); 
+    this.gameService._path_speed = this.path_speed;
     this.gameService.collect_speed = this.collect_speed;
+    console.log("configuration choisie", this.selected_configuration)
+    console.log("graphe choisi", this.gameService.graph)
     
     this.router.navigate(['/board'])
   }

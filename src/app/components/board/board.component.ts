@@ -52,6 +52,7 @@ export class BoardComponent implements OnInit {
   }
 
   goBackToMenu(): void {
+    this.gameService.graph = undefined;
     this.router.navigate(['/configuration']);
   }
 

@@ -5,11 +5,14 @@ import * as d3 from 'd3';
 import { Pawn } from 'src/app/models/Pawn/pawn';
 import { environment } from 'src/environments/environment';
 import { NavigationExtras, Router } from '@angular/router';
-import { Strat2Goat } from 'src/app/models/Strategy/strat-2-goat';
+import { GloutonGoat } from 'src/app/models/Strategy/glouton-goat';
+import { MaxPathGoat } from 'src/app/models/Strategy/max-path-goat';
 import { IStrategy } from 'src/app/models/Strategy/istrategy';
 import { GraphService } from 'src/app/services/graph/graph.service';
 import { RandomGoat } from 'src/app/models/Strategy/naive-goat';
 import { NaiveCabbage } from 'src/app/models/Strategy/naive-cabbage';
+import { MaxDegAnticipation } from 'src/app/models/Strategy/max-deg-anticipation';
+import { RandomAnticipation } from 'src/app/models/Strategy/random-anticipation';
 import { leastIndex } from 'd3';
 import { AdventureLevel } from 'src/app/models/Adventure/AdventureLevel/adventure-level';
 import { AdventureService } from '../Adventure/adventure.service';
@@ -33,11 +36,14 @@ export class GameService {
   private _player_side: string = 'unknown';
   private _graph!: Graph;
   private _collect_speed = 1;
+  public path_speed;
   public isAdventure = false;
 
   public ai_strat!: IStrategy;
 
   private svg: any;
+
+  public gameMode = 'easy';
 
   private goat_turn: boolean = false;
   private goat_win: boolean = false;
@@ -196,10 +202,32 @@ export class GameService {
 
   chooseAIStrat() {
     if (this._player_side === 'goat'){
+      if (this.gameMode === 'easy'){
       this.ai_strat = new NaiveCabbage();
     }
+    if (this.gameMode === 'medium'){
+      this.ai_strat = new RandomAnticipation();
+      }
+    if (this.gameMode === 'hard'){
+      this.ai_strat = new MaxDegAnticipation();
+    }
     else{
+      this.ai_strat = new MaxDegAnticipation();
+    }
+  }
+  else{
+    if (this.gameMode === 'easy'){
       this.ai_strat = new RandomGoat();
+      }
+    if (this.gameMode === 'medium'){
+      this.ai_strat = new GloutonGoat();
+      }
+    if (this.gameMode === 'hard'){
+      this.ai_strat = new MaxPathGoat();
+      }
+    else{
+      this.ai_strat = new MaxPathGoat();
+      }
     }
   }
 
@@ -228,6 +256,7 @@ export class GameService {
               else{
                 return "C'est au tour du hacker"
               }})
+              this.displayPathCount(this._path_speed)
           d3.select('#info-jeu')
             .style('color', `${this.goat_color}`)
             .data([this.role_cabbage])
@@ -332,6 +361,7 @@ export class GameService {
           this.goat_position = pos;
           this.goat_position_index = pos.index;
           this.goat_token?.updatePosition(pos);
+          this.displayPathCount(this._path_speed);
           this.validateTurn();
         }
       }
@@ -378,6 +408,7 @@ export class GameService {
           else{
             return "JOUEUR 2 = Navigateur web"
           }});
+        this.displayPathCount(this._path_speed)
       } else if(!this.goat_turn) {
         console.log('trou précédent', this.trou);
         d3.select('#details-informations')
@@ -425,6 +456,15 @@ export class GameService {
           .style('color', this.role_cabbage)
           .attr('id', 'collect-informations')
           .text(`Nombre de coups restant à collecter : ${this.collect_speed - this.collected_cabbages.length}`)
+  }
+
+  private displayPathCount(n: number) {
+    d3.select('#path-informations').remove();
+    d3.select('#details-informations')
+          .append('p')
+          .style('color', this.role_goat)
+          .attr('id', 'path-informations')
+          .text(`Nombre de pas restant à faire : ${n}`)
   }
 
   getRoleCabb(){
@@ -525,9 +565,11 @@ export class GameService {
       }
     } else {
       if (this.goat_turn){
-        this.previous_cabbage()
-        this.goat_turn = false
-        this.update();
+        for (let number of [].constructor(this._path_speed)){
+          this.previous_cabbage()
+          this.goat_turn = false
+          this.update();
+        }
         this.validateTurn();
       } else {
         this.previous_goat()
@@ -544,7 +586,8 @@ export class GameService {
     if(this.goat_turn === true) {
       this.previous_goat_position = this.previous_position;
       this.updateGoatPosition(this.goat_token?.getPosition() as any);
-      this.goat_token?.setState(environment.pawnWaitingTurn);
+      this.goat_token?.setState(environment.pawnOnTurn);
+      this._path_speed -= 1;
     } else {
       console.log('hello', this.collected_cabbages);
       this.collectCabbages();
@@ -629,8 +672,12 @@ export class GameService {
         })
 
     }
-
-    this.goat_turn = !this.goat_turn;
+    this.goat_turn = true;
+    if (this._path_speed === 0){
+      this.goat_turn = !this.goat_turn;
+      this._path_speed = 5;
+      this.goat_token?.setState(environment.pawnWaitingTurn);
+    }
     this.update()
   }
 

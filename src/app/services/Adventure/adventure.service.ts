@@ -75,8 +75,8 @@ export class AdventureService {
         }
       }
       this.gameService.update();
-      return extras;
     }
+    return extras;
   }
 
   getAdventureMode(): Mode {
@@ -95,6 +95,7 @@ export class AdventureService {
     const res = await this.currentAdventure.goToNextLevel();
     if(res) {
       this.router.navigate(['/adventure-menu']);
+      return true
     } else {
       return true
     }
